@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>[[${title}]]</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container py-5">
+
+  <h1 class="text-center mb-4">プレミアム会員解約</h1>
+
+  <div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-body">
+      <h4 class="card-title mb-3">ダミー解約画面</h4>
+
+      <p class="mb-3">
+        ここでは外部のサブスク解約APIの代わりに、
+        ダミー画面でプレミアム会員の解約を再現します。
+      </p>
+
+      <div class="alert alert-warning">
+        解約すると、会員種別はレギュラー会員に戻ります。
+      </div>
+
+      <ul class="mb-4">
+        <li>プレミアム会員向け表示が解除されます</li>
+        <li>アップグレードボタンが再び表示されます</li>
+        <li>この画面はポートフォリオ用のダミー解約です</li>
+      </ul>
+
+      <div class="d-flex gap-3 justify-content-center">
+        <form th:action="@{/members/club/downgrade/complete}" method="post">
+          <button type="submit" class="btn btn-danger">
+            解約を確定する
+          </button>
+        </form>
+
+        <a th:href="@{/members/club/home}" class="btn btn-secondary">
+          キャンセル
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

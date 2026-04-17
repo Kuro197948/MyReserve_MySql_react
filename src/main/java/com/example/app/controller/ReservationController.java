@@ -1,5 +1,7 @@
 package com.example.app.controller;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,16 +13,22 @@ import com.example.app.service.ReservationService;
 
 @Controller
 public class ReservationController {
-
+	
     private final ReservationService reservationService;
 
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
-
+    
     // 会員側：予約入力画面を開く
     @GetMapping("/members/club/reservation/form")
-    public String showReservationForm(Model model) {
+    public String showReservationForm(Model model, HttpSession session) {
+        Integer memberId = (Integer) session.getAttribute("memberId");
+
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
+        }
+
         model.addAttribute("reservation", new Reservation());
         model.addAttribute("title", "予約フォーム");
         return "members/club/reservationForm";
@@ -28,8 +36,14 @@ public class ReservationController {
 
     // 会員側：予約登録
     @PostMapping("/members/club/reservation/create")
-    public String createReservation(Reservation reservation) {
-        reservation.setMemberId(1);
+    public String createReservation(Reservation reservation, HttpSession session) {
+        Integer memberId = (Integer) session.getAttribute("memberId");
+
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
+        }
+
+        reservation.setMemberId(memberId);
         reservationService.insert(reservation);
         return "redirect:/members/club/reservation/complete";
     }
@@ -78,4 +92,5 @@ public class ReservationController {
         reservationService.deleteById(id);
         return "redirect:/admins/club/reservations";
     }
+   
 }

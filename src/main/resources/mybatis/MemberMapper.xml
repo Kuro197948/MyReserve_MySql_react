@@ -89,6 +89,14 @@
         WHERE id = #{id}
     </update>
 
+    <!-- 会員種別だけ更新 -->
+    <update id="updateMemberType">
+        UPDATE members
+        SET
+            type_id = #{typeId}
+        WHERE id = #{memberId}
+    </update>
+
     <!-- パスワードだけ更新 -->
     <update id="updatePasswordById">
         UPDATE members

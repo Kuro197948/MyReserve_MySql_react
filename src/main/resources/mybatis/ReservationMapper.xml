@@ -59,20 +59,38 @@
         FROM reservations
         WHERE id = #{id}
     </select>
-    <update id="update" parameterType="com.example.app.domain.Reservation">
-    UPDATE reservations
-    SET
-        representative_name = #{representativeName},
-        reservation_date = #{reservationDate},
-        people_count = #{peopleCount},
-        phone_number = #{phoneNumber},
-        course_name = #{courseName}
-    WHERE id = #{id}
-</update>
 
-<delete id="deleteById" parameterType="int">
-    DELETE FROM reservations
-    WHERE id = #{id}
-</delete>
+    <select id="findByMemberId" parameterType="int" resultMap="reservationResult">
+        SELECT
+            id,
+            people_count,
+            representative_name,
+            phone_number,
+            course_name,
+            remarks,
+            created_at,
+            member_id,
+            status,
+            reservation_date
+        FROM reservations
+        WHERE member_id = #{memberId}
+        ORDER BY reservation_date DESC
+    </select>
+
+    <update id="update" parameterType="com.example.app.domain.Reservation">
+        UPDATE reservations
+        SET
+            representative_name = #{representativeName},
+            reservation_date = #{reservationDate},
+            people_count = #{peopleCount},
+            phone_number = #{phoneNumber},
+            course_name = #{courseName}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM reservations
+        WHERE id = #{id}
+    </delete>
 
 </mapper>

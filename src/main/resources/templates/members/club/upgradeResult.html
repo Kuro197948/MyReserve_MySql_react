@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>[[${title}]]</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container py-5 text-center">
+
+  <h1 class="mb-4">アップグレード完了</h1>
+
+  <div class="alert alert-warning mx-auto" style="max-width: 600px;">
+    プレミアム会員へのアップグレードが完了しました。
+  </div>
+
+  <p class="mb-4">
+    次回以降、プレミアム会員向けの表示・機能を利用できます。
+  </p>
+
+  <a th:href="@{/members/club/home}" class="btn btn-primary">
+    ホームへ戻る
+  </a>
+
+</div>
+</body>
+</html>

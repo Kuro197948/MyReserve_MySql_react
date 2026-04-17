@@ -37,4 +37,8 @@ public class ReservationService {
     public void deleteById(Integer id) {
         reservationMapper.deleteById(id);
     }
+
+    public List<Reservation> findByMemberId(Integer memberId) {
+        return reservationMapper.findByMemberId(memberId);
+    }
 }

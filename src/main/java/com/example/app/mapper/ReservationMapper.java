@@ -14,8 +14,10 @@ public interface ReservationMapper {
     List<Reservation> selectAll();
 
     Reservation selectById(Integer id);
-    
+
     void update(Reservation reservation);
 
     void deleteById(Integer id);
+
+    List<Reservation> findByMemberId(Integer memberId);
 }

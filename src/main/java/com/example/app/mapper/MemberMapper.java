@@ -31,4 +31,7 @@ public interface MemberMapper {
     void updateCredentialsById(Member member);
 
     void delete(Integer id);
+    
+    int updateMemberType(@Param("memberId") Integer memberId,
+            @Param("typeId") Integer typeId);
 }
