@@ -15,7 +15,8 @@
             course_name,
             remarks,
             member_id,
-            reservation_date
+            reservation_date,
+            status
         )
         VALUES (
             #{peopleCount},
@@ -24,10 +25,12 @@
             #{courseName},
             #{remarks},
             #{memberId},
-            #{reservationDate}
+            #{reservationDate},
+            'RESERVED'
         )
     </insert>
 
+    <!-- 管理者側：現在の予約一覧 -->
     <select id="selectAll" resultMap="reservationResult">
         SELECT
             id,
@@ -39,9 +42,13 @@
             created_at,
             member_id,
             status,
-            reservation_date
+            reservation_date,
+            member_deleted,
+            admin_deleted
         FROM reservations
-        ORDER BY reservation_date DESC
+        WHERE status = 'RESERVED'
+          AND admin_deleted = false
+        ORDER BY reservation_date DESC, created_at DESC
     </select>
 
     <select id="selectById" parameterType="int" resultMap="reservationResult">
@@ -55,11 +62,14 @@
             created_at,
             member_id,
             status,
-            reservation_date
+            reservation_date,
+            member_deleted,
+            admin_deleted
         FROM reservations
         WHERE id = #{id}
     </select>
 
+    <!-- 会員側：現在の予約確認画面 -->
     <select id="findByMemberId" parameterType="int" resultMap="reservationResult">
         SELECT
             id,
@@ -71,10 +81,59 @@
             created_at,
             member_id,
             status,
-            reservation_date
+            reservation_date,
+            member_deleted,
+            admin_deleted
         FROM reservations
         WHERE member_id = #{memberId}
-        ORDER BY reservation_date DESC
+          AND status = 'RESERVED'
+          AND reservation_date >= CURRENT_DATE
+          AND member_deleted = false
+        ORDER BY reservation_date ASC, created_at DESC
+    </select>
+
+    <!-- 会員側：予約履歴画面 -->
+    <select id="findHistoryByMemberId" parameterType="int" resultMap="reservationResult">
+        SELECT
+            id,
+            people_count,
+            representative_name,
+            phone_number,
+            course_name,
+            remarks,
+            created_at,
+            member_id,
+            status,
+            reservation_date,
+            member_deleted,
+            admin_deleted
+        FROM reservations
+        WHERE member_id = #{memberId}
+          AND member_deleted = false
+          AND (
+                status IN ('CANCELED', 'COMPLETED')
+                OR reservation_date &lt; CURRENT_DATE
+              )
+        ORDER BY reservation_date DESC, created_at DESC
+    </select>
+
+    <select id="findByIdAndMemberId" resultMap="reservationResult">
+        SELECT
+            id,
+            people_count,
+            representative_name,
+            phone_number,
+            course_name,
+            remarks,
+            created_at,
+            member_id,
+            status,
+            reservation_date,
+            member_deleted,
+            admin_deleted
+        FROM reservations
+        WHERE id = #{id}
+          AND member_id = #{memberId}
     </select>
 
     <update id="update" parameterType="com.example.app.domain.Reservation">
@@ -84,13 +143,126 @@
             reservation_date = #{reservationDate},
             people_count = #{peopleCount},
             phone_number = #{phoneNumber},
-            course_name = #{courseName}
+            course_name = #{courseName},
+            remarks = #{remarks}
         WHERE id = #{id}
     </update>
 
-    <delete id="deleteById" parameterType="int">
-        DELETE FROM reservations
+    <!-- 管理者側：現在の予約一覧から削除 = キャンセル扱いにして履歴へ移動 -->
+    <update id="deleteById" parameterType="int">
+        UPDATE reservations
+        SET status = 'CANCELED'
         WHERE id = #{id}
-    </delete>
+    </update>
 
+    <!-- 会員側：予約キャンセル -->
+    <update id="updateStatusByIdAndMemberId">
+        UPDATE reservations
+        SET status = #{status}
+        WHERE id = #{id}
+          AND member_id = #{memberId}
+    </update>
+
+    <select id="selectPendingRequestViews"
+            resultType="com.example.app.domain.ReservationRequestView">
+        SELECT
+            rr.id,
+            rr.reservation_id,
+            rr.member_id,
+            rr.request_type,
+            rr.request_reason,
+            rr.status,
+            rr.refund_status,
+            rr.admin_comment,
+            rr.created_at,
+            rr.processed_at,
+
+            r.reservation_date,
+            r.people_count,
+            r.representative_name,
+            r.phone_number,
+            r.course_name,
+            r.status AS reservation_status,
+
+            m.name AS member_name,
+            m.email AS member_email
+
+        FROM reservation_requests rr
+        INNER JOIN reservations r
+            ON rr.reservation_id = r.id
+        INNER JOIN members m
+            ON rr.member_id = m.id
+        WHERE rr.status = 'PENDING'
+        ORDER BY rr.created_at DESC
+    </select>
+
+    <!-- 管理者側：予約ステータス変更 -->
+    <update id="updateStatusById">
+        UPDATE reservations
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 管理者側：予約履歴 -->
+    <select id="selectHistory" resultMap="reservationResult">
+        SELECT
+            id,
+            people_count,
+            representative_name,
+            phone_number,
+            course_name,
+            remarks,
+            created_at,
+            member_id,
+            status,
+            reservation_date,
+            member_deleted,
+            admin_deleted
+        FROM reservations
+        WHERE admin_deleted = false
+          AND (
+                status IN ('CANCELED', 'COMPLETED')
+                OR reservation_date &lt; CURRENT_DATE
+              )
+        ORDER BY reservation_date DESC, created_at DESC
+    </select>
+
+    <!-- 会員側：履歴から削除 = 会員側だけ非表示 -->
+    <update id="hideFromMember">
+        UPDATE reservations
+        SET member_deleted = true
+        WHERE id = #{id}
+          AND member_id = #{memberId}
+    </update>
+
+    <!-- 管理者側：履歴から削除 = 管理者側だけ非表示 -->
+    <update id="hideFromAdmin" parameterType="int">
+        UPDATE reservations
+        SET admin_deleted = true
+        WHERE id = #{id}
+    </update>
+	
+	<!-- 会員側ホーム：次回予約を1件取得 -->
+<select id="findNextReservationByMemberId" parameterType="int" resultMap="reservationResult">
+    SELECT
+        id,
+        people_count,
+        representative_name,
+        phone_number,
+        course_name,
+        remarks,
+        created_at,
+        member_id,
+        status,
+        reservation_date,
+        member_deleted,
+        admin_deleted
+    FROM reservations
+    WHERE member_id = #{memberId}
+      AND status = 'RESERVED'
+      AND reservation_date >= CURRENT_TIMESTAMP
+      AND member_deleted = false
+    ORDER BY reservation_date ASC, created_at DESC
+    LIMIT 1
+</select>
 </mapper>

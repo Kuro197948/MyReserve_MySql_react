@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">予約申請一覧</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+  <section class="admin-request-page">
+
+    <div class="admin-request-header">
+      <h1 class="admin-request-title">予約申請一覧</h1>
+      <p class="admin-request-description">
+        会員から送信されたキャンセル申請・変更申請を確認できます。
+      </p>
+    </div>
+		
+	<div class="alert alert-success"
+	     th:if="${successMessage != null}"
+	     th:text="${successMessage}">
+	  成功メッセージ
+	</div>
+
+	<div class="alert alert-danger"
+	     th:if="${errorMessage != null}"
+	     th:text="${errorMessage}">
+	  エラーメッセージ
+	</div>
+    <div th:if="${requests != null and !#lists.isEmpty(requests)}">
+
+      <div class="admin-request-card" th:each="req : ${requests}">
+
+        <div class="admin-request-card-header">
+          <div>
+            <span class="admin-request-type"
+                  th:text="${req.requestType == 'CANCEL' ? 'キャンセル申請' : '変更申請'}">
+              キャンセル申請
+            </span>
+
+            <h2 class="admin-request-card-title">
+              <span th:text="${req.courseName}">コース名</span>
+            </h2>
+          </div>
+
+          <span class="admin-request-status"
+                th:text="${req.status == 'PENDING' ? '承認待ち' : req.status}">
+            承認待ち
+          </span>
+        </div>
+
+        <div class="admin-request-body">
+          <p>
+            <strong>会員名：</strong>
+            <span th:text="${req.memberName}">会員名</span>
+          </p>
+
+          <p>
+            <strong>メール：</strong>
+            <span th:text="${req.memberEmail}">mail@example.com</span>
+          </p>
+
+          <p>
+            <strong>予約日：</strong>
+            <span th:text="${#temporals.format(req.reservationDate, 'yyyy/MM/dd')}">
+              2026/05/01
+            </span>
+          </p>
+
+          <p>
+            <strong>人数：</strong>
+            <span th:text="${req.peopleCount}">2</span>名
+          </p>
+
+          <p>
+            <strong>代表者名：</strong>
+            <span th:text="${req.representativeName}">代表者名</span>
+          </p>
+
+          <p>
+            <strong>電話番号：</strong>
+            <span th:text="${req.phoneNumber}">0000000000</span>
+          </p>
+
+          <p>
+            <strong>申請理由：</strong>
+            <span th:text="${req.requestReason}">申請理由</span>
+          </p>
+
+          <p>
+            <strong>申請日時：</strong>
+            <span th:text="${#temporals.format(req.createdAt, 'yyyy/MM/dd HH:mm')}">
+              2026/05/01 12:00
+            </span>
+          </p>
+        </div>
+
+		<div class="admin-request-actions">
+
+		  <form th:action="@{/admins/club/reservation-requests/{id}/approve(id=${req.id})}"
+		        method="post">
+		    <input type="hidden" name="adminComment" value="キャンセル申請を承認しました。">
+
+		    <button type="submit" class="btn btn-outline-success">
+		      承認する
+		    </button>
+		  </form>
+
+		  <form th:action="@{/admins/club/reservation-requests/{id}/reject(id=${req.id})}"
+		        method="post">
+		    <input type="hidden" name="adminComment" value="キャンセル申請を却下しました。">
+
+		    <button type="submit" class="btn btn-outline-danger">
+		      却下する
+		    </button>
+		  </form>
+
+		</div>
+
+      </div>
+
+    </div>
+
+    <div class="admin-request-empty"
+         th:if="${requests == null or #lists.isEmpty(requests)}">
+      現在、承認待ちの予約申請はありません。
+    </div>
+
+    <div class="admin-request-back-wrap">
+      <a th:href="@{/admins/club/home}" class="admin-request-back-link">
+        管理者ホームへ戻る
+      </a>
+    </div>
+
+  </section>
+</div>
+
+</body>
+</html>

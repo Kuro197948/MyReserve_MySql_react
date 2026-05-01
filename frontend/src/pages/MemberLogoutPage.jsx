@@ -14,7 +14,7 @@ function MemberLogoutPage() {
         setMessage("ログアウト処理で問題が発生しました。ログイン画面へ移動します...");
       } finally {
         setTimeout(() => {
-          window.location.href = "http://localhost:10000/members/memberslogin";
+          window.location.href = "http://localhost:8080/members/memberslogin";
         }, 1200);
       }
     };

@@ -1,41 +1,43 @@
 @charset "UTF-8";
 
-:root{
+:root {
   --bg: white;
-  --panel: rgba(255,255,255,0.06);
-  --panel-border: rgba(255,255,255,0.12);
-  --text: blue;
-  --muted: rgba(233,238,252,0.7);
-  --accent: #55b0ff; /* ←ここだけ好みで変える */
-  --shadow: 0 10px 30px rgba(0,0,0,0.55);
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --text: #222;
+  --muted: #666;
+  --accent: #55b0ff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+  min-height: 100%;
 }
 
-body{
-  background: radial-gradient(1200px 600px at 15% 10%, rgba(53,208,255,0.18), transparent 55%),
-              radial-gradient(1000px 500px at 85% 20%, rgba(180,80,255,0.16), transparent 60%),
-              var(--bg);
+body {
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(53, 208, 255, 0.18), transparent 55%),
+    radial-gradient(1000px 500px at 85% 20%, rgba(180, 80, 255, 0.16), transparent 60%),
+    var(--bg);
   color: var(--text);
 }
 
-/* コンテナ（ページ全体の枠）*/
-.gb-container{
+/* コンテナ（ページ全体の枠） */
+.gb-container {
   max-width: 980px;
   margin: 0 auto;
-  padding: 28px 16px 60px; 
+  padding: 28px 16px 60px;
 }
 
 /* タイトル */
-.gb-title{
-  letter-spacing: .08em;
+.gb-title {
+  letter-spacing: 0.08em;
   font-weight: 700;
 }
 
 /* ガラス風のパネル */
-.gb-panel{
+.gb-panel {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: 18px;
@@ -46,38 +48,686 @@ body{
 }
 
 /* ボタンを“ゲームっぽく” */
-.btn-gb{
+.btn-gb {
   border-radius: 14px;
   font-weight: 700;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
   padding: 10px 16px;
-  border: 1px solid rgba(53,208,255,0.35);
-  background: rgba(53,208,255,0.12);
+  border: 1px solid rgba(53, 208, 255, 0.35);
+  background: rgba(53, 208, 255, 0.12);
   color: var(--text);
-  box-shadow: 0 0 0 rgba(53,208,255,0);
-  transition: .2s ease;
+  box-shadow: 0 0 0 rgba(53, 208, 255, 0);
+  transition: 0.2s ease;
 }
-.btn-gb:hover{
+
+.btn-gb:hover {
   transform: translateY(-1px);
-  background: rgba(53,208,255,0.18);
-  border-color: rgba(53,208,255,0.6);
-  box-shadow: 0 0 18px rgba(53,208,255,0.22);
+  background: rgba(53, 208, 255, 0.18);
+  border-color: rgba(53, 208, 255, 0.6);
+  box-shadow: 0 0 18px rgba(53, 208, 255, 0.22);
   color: var(--text);
 }
 
 /* 小さめの文字 */
-.text-muted-gb{
+.text-muted-gb {
   color: var(--muted) !important;
 }
 
-/* テーブルも少し整える */
-.table-gb{
+/* テーブル */
+.table-gb {
   color: var(--text);
 }
-.table-gb thead th{
+
+.table-gb thead th {
   color: var(--muted);
-  border-bottom-color: rgba(255,255,255,0.15);
+  border-bottom-color: rgba(0, 0, 0, 0.15);
 }
-.table-gb td, .table-gb th{
-  border-top-color: rgba(255,255,255,0.10);
+
+.table-gb td,
+.table-gb th {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ==============================
+   会員側：予約一覧
+================================ */
+
+.member-reservation-page {
+  max-width: 960px;
+  margin: 40px auto 56px;
+  padding: 0 16px;
+}
+
+.reservation-page-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.reservation-page-title {
+  color: blue;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.reservation-page-description {
+  color: #555;
+  margin-bottom: 0;
+}
+
+.reservation-card {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.reservation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.reservation-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.reservation-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.reservation-status {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  font-size: 0.85rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.reservation-card-body p {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.reservation-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.reservation-card-actions .btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.reservation-card-actions .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(13, 110, 253, 0.15);
+}
+
+.reservation-empty {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  padding: 22px;
+  color: #555;
+  text-align: center;
+}
+
+.reservation-back-link-wrap {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.reservation-back-link {
+  display: inline-block;
+  color: #0d6efd;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.reservation-back-link:hover {
+  transform: scale(1.05);
+  color: #0a58ca;
+  text-decoration: none;
+}
+
+/* ==============================
+   会員側：予約詳細
+================================ */
+
+.reservation-detail-page {
+  max-width: 960px;
+  margin: 40px auto 56px;
+  padding: 0 16px;
+}
+
+.reservation-detail-card {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 16px;
+  padding: 24px 26px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.reservation-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.reservation-detail-title {
+  font-size: 1.35rem;
+  font-weight: bold;
+  margin-bottom: 0;
+  color: #222;
+}
+
+.reservation-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reservation-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.reservation-detail-label {
+  font-weight: bold;
+  color: #555;
+  min-width: 120px;
+}
+
+.reservation-detail-value {
+  color: #222;
+  text-align: right;
+}
+
+.reservation-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.reservation-detail-actions .btn {
+  min-width: 120px;
+  font-weight: bold;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.reservation-detail-actions .btn:not(:disabled):hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+.reservation-detail-note {
+  margin-top: 14px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* ==============================
+   会員側：キャンセル申請
+================================ */
+
+.cancel-request-page {
+  max-width: 960px;
+  margin: 40px auto 56px;
+  padding: 0 16px;
+}
+
+.cancel-request-card {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 16px;
+  padding: 24px 26px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.cancel-reservation-summary {
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+}
+
+.cancel-reservation-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 14px;
+  color: #222;
+}
+
+.cancel-reservation-info p {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.cancel-request-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.cancel-request-note {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 10px;
+}
+
+.cancel-request-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.cancel-request-actions .btn {
+  min-width: 140px;
+  font-weight: bold;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cancel-request-actions .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ==============================
+   管理側：予約申請一覧
+================================ */
+
+.admin-request-page {
+  max-width: 960px;
+  margin: 40px auto 56px;
+  padding: 0 16px;
+}
+
+.admin-request-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-request-title {
+  color: blue;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.admin-request-description {
+  color: #555;
+  margin-bottom: 0;
+}
+
+.admin-request-card {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.admin-request-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.admin-request-type {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: #fff3cd;
+  color: #7a5700;
+  border: 1px solid #ffd966;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.admin-request-card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 0;
+}
+
+.admin-request-status {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  font-size: 0.85rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.admin-request-body p {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.admin-request-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.admin-request-actions form {
+  display: inline-block;
+}
+
+.admin-request-actions .btn {
+  min-width: 120px;
+  font-weight: bold;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-request-actions .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+.admin-request-empty {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  padding: 22px;
+  color: #555;
+  text-align: center;
+}
+
+.admin-request-back-wrap {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.admin-request-back-link {
+  display: inline-block;
+  color: #0d6efd;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.admin-request-back-link:hover {
+  transform: scale(1.05);
+  color: #0a58ca;
+  text-decoration: none;
+}
+
+/* ==============================
+   管理側：予約履歴
+================================ */
+
+.admin-history-page {
+  max-width: 960px;
+  margin: 40px auto 56px;
+  padding: 0 16px;
+}
+
+.admin-history-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-history-title {
+  color: blue;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.admin-history-description {
+  color: #555;
+  margin-bottom: 0;
+}
+
+.admin-history-card {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.admin-history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.admin-history-status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.admin-history-card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 0;
+}
+
+.admin-history-date {
+  color: #555;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.admin-history-body p {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.admin-history-empty {
+  background-color: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  padding: 22px;
+  color: #555;
+  text-align: center;
+}
+
+.admin-history-back-wrap {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.admin-history-back-link {
+  display: inline-block;
+  color: #0d6efd;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.admin-history-back-link:hover {
+  transform: scale(1.05);
+  color: #0a58ca;
+  text-decoration: none;
+}
+
+/* ==============================
+   レスポンシブ
+================================ */
+
+@media (max-width: 576px) {
+  .reservation-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservation-card-actions {
+    justify-content: stretch;
+  }
+
+  .reservation-card-actions .btn {
+    width: 100%;
+  }
+
+  .reservation-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservation-detail-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .reservation-detail-value {
+    text-align: left;
+  }
+
+  .reservation-detail-actions {
+    flex-direction: column;
+  }
+
+  .reservation-detail-actions .btn {
+    width: 100%;
+  }
+
+  .reservation-detail-note {
+    text-align: left;
+  }
+
+  .cancel-request-card {
+    padding: 22px 18px;
+  }
+
+  .cancel-request-actions {
+    flex-direction: column;
+  }
+
+  .cancel-request-actions .btn {
+    width: 100%;
+  }
+
+  .admin-request-card-header {
+    flex-direction: column;
+  }
+
+  .admin-request-actions {
+    flex-direction: column;
+  }
+
+  .admin-request-actions .btn {
+    width: 100%;
+  }
+
+  .admin-history-card-header {
+    flex-direction: column;
+  }
+
+  .admin-history-date {
+    white-space: normal;
+  }
+
+  .admin-history-back-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.reservation-countdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background-color: #eef5ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.reservation-countdown-icon {
+    font-size: 1.1rem;
+}
+
+.reservation-countdown-today {
+    background-color: #fff7ed;
+    color: #ea580c;
+    border-color: #fed7aa;
+}
+
+.reservation-countdown-tomorrow {
+    background-color: #fefce8;
+    color: #ca8a04;
+    border-color: #fde68a;
+}
+
+.reservation-countdown-upcoming {
+    background-color: #eef5ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.reservation-countdown-past {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-color: #d1d5db;
+}
+
+.reservation-countdown-muted {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-color: #d1d5db;
 }

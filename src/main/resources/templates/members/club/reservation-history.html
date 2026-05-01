@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">予約履歴</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+  <section class="member-reservation-page">
+
+    <div class="reservation-page-header">
+      <h1 class="reservation-page-title">予約履歴</h1>
+      <p class="reservation-page-description">
+        キャンセル済み・完了済み・過去の予約履歴を確認できます。
+      </p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+      処理が完了しました。
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
+      エラーが発生しました。
+    </div>
+
+    <div th:if="${reservations != null and !#lists.isEmpty(reservations)}">
+
+      <div class="reservation-card" th:each="r : ${reservations}">
+
+        <div class="reservation-card-header">
+          <h2 class="reservation-card-title">
+            <span th:text="${r.courseName != null and !#strings.isEmpty(r.courseName) ? r.courseName : 'コース未設定'}">
+              コース名
+            </span>
+          </h2>
+
+          <span class="reservation-status" th:text="${r.statusLabel}">
+            キャンセル済み
+          </span>
+        </div>
+
+        <div class="reservation-card-body">
+
+          <p>
+            <strong>予約日時：</strong>
+            <span th:text="${#temporals.format(r.reservationDate, 'yyyy/MM/dd HH:mm')}">
+              2026/05/01 12:00
+            </span>
+          </p>
+
+          <p>
+            <strong>ID：</strong>
+            <span th:text="${r.id}">1</span>
+          </p>
+
+          <p>
+            <strong>人数：</strong>
+            <span th:text="${r.peopleCount}">2</span>名
+          </p>
+
+          <p>
+            <strong>代表者名：</strong>
+            <span th:text="${r.representativeName}">山田太郎</span>
+          </p>
+
+          <p>
+            <strong>電話番号：</strong>
+            <span th:text="${r.phoneNumber}">090-0000-0000</span>
+          </p>
+
+          <p th:if="${r.remarks != null and !#strings.isEmpty(r.remarks)}">
+            <strong>備考：</strong>
+            <span th:text="${r.remarks}">備考</span>
+          </p>
+
+          <p>
+            <strong>予約作成日：</strong>
+            <span th:text="${#temporals.format(r.createdAt, 'yyyy/MM/dd HH:mm')}">
+              2026/05/01 12:00
+            </span>
+          </p>
+
+        </div>
+
+        <div class="reservation-card-actions">
+
+          <a th:href="@{/members/club/reservations/{id}(id=${r.id})}"
+             class="btn btn-outline-primary">
+            詳細を見る
+          </a>
+
+          <form th:action="@{/members/club/reservations/history/{id}/delete(id=${r.id})}"
+                method="post"
+                onsubmit="return confirm('この予約履歴を画面上から削除しますか？');">
+            <button type="submit" class="btn btn-outline-danger">
+              履歴から削除
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="reservation-empty"
+         th:if="${reservations == null or #lists.isEmpty(reservations)}">
+      予約履歴はありません。
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <a th:href="@{/members/club/reservations}" class="btn btn-outline-secondary">
+        予約確認へ戻る
+      </a>
+
+      <a th:href="@{/members/club/home}" class="btn btn-secondary">
+        ホームへ戻る
+      </a>
+    </div>
+
+  </section>
+</div>
+
+</body>
+</html>

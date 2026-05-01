@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">キャンセル申請</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+  <section class="cancel-request-page">
+
+    <div class="reservation-page-header">
+      <h1 class="reservation-page-title">キャンセル申請</h1>
+      <p class="reservation-page-description">
+        予約内容を確認し、キャンセル理由を入力してください。
+      </p>
+    </div>
+
+    <div class="cancel-request-card">
+
+      <div class="cancel-reservation-summary">
+        <h2 class="cancel-reservation-title">
+          <span th:text="${reservation.courseName}">コース名</span>
+        </h2>
+
+        <div class="cancel-reservation-info">
+          <p>
+            <strong>予約日：</strong>
+            <span th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd')}">
+              2026/05/01
+            </span>
+          </p>
+
+          <p>
+            <strong>人数：</strong>
+            <span th:text="${reservation.peopleCount}">2</span>名
+          </p>
+
+          <p>
+            <strong>代表者名：</strong>
+            <span th:text="${reservation.representativeName}">山田太郎</span>
+          </p>
+
+          <p>
+            <strong>電話番号：</strong>
+            <span th:text="${reservation.phoneNumber}">090-0000-0000</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="alert alert-danger"
+           th:if="${errorMessage != null}"
+           th:text="${errorMessage}">
+        エラーメッセージ
+      </div>
+
+      <form th:action="@{/members/club/reservations/{id}/cancel-request(id=${reservation.id})}"
+            method="post">
+
+        <div class="mb-3">
+          <label for="requestReason" class="form-label cancel-request-label">
+            キャンセル理由
+          </label>
+
+          <textarea id="requestReason"
+                    name="requestReason"
+                    class="form-control"
+                    rows="6"
+                    placeholder="例：予定が合わなくなったため"
+                    th:text="${requestReason}">
+          </textarea>
+        </div>
+
+        <p class="cancel-request-note">
+          ※送信後、管理者が内容を確認します。承認されるまで予約はキャンセル確定にはなりません。
+        </p>
+
+        <div class="cancel-request-actions">
+          <a th:href="@{/members/club/reservations/{id}(id=${reservation.id})}"
+             class="btn btn-outline-secondary">
+            戻る
+          </a>
+
+          <button type="submit" class="btn btn-outline-danger">
+            キャンセル申請を送信
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </section>
+</div>
+
+</body>
+</html>

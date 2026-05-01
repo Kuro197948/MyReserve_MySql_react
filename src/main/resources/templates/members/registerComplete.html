@@ -15,7 +15,7 @@
 <p>会員登録が完了しました。</p>
 <p>パスワード設定用のメールを送信しました。</p>
 
-<a th:href="@{'/members/password/setup?token=' + ${token.token}}"
+<a th:href="@{/members/password/reset(token=${token})}"
    class="btn btn-success mb-3">パスワード設定へ</a>
 
 <br>

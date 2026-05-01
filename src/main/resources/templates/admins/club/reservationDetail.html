@@ -9,63 +9,105 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container mt-4">
 
     <h1 class="mb-4 text-center">予約詳細</h1>
 
-    <table class="table table-bordered">
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
+        処理が完了しました。
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
+        エラーが発生しました。
+    </div>
+
+    <div th:if="${hasPendingCancelRequest}" class="alert alert-warning text-center">
+        この予約はキャンセル申請中です。管理者の確認をお待ちください。
+    </div>
+
+    <table class="table table-bordered align-middle">
         <tr>
             <th>ID</th>
-            <td th:text="${reservation.id}"></td>
+            <td th:text="${reservation.id}">1</td>
         </tr>
+
         <tr>
             <th>予約日時</th>
-            <td th:text="${reservation.reservationDate}"></td>
+            <td th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd HH:mm')}">
+                2026/05/01 12:00
+            </td>
         </tr>
+
         <tr>
             <th>人数</th>
-            <td th:text="${reservation.peopleCount}"></td>
+            <td>
+                <span th:text="${reservation.peopleCount}">2</span>名
+            </td>
         </tr>
+
         <tr>
             <th>代表者名</th>
-            <td th:text="${reservation.representativeName}"></td>
+            <td th:text="${reservation.representativeName}">山田太郎</td>
         </tr>
+
         <tr>
             <th>電話番号</th>
-            <td th:text="${reservation.phoneNumber}"></td>
+            <td th:text="${reservation.phoneNumber}">090-0000-0000</td>
         </tr>
+
         <tr>
             <th>コース名</th>
-            <td th:text="${reservation.courseName}"></td>
+            <td th:text="${reservation.courseName != null and !#strings.isEmpty(reservation.courseName) ? reservation.courseName : 'コース未設定'}">
+                コース未設定
+            </td>
         </tr>
+
         <tr>
             <th>備考</th>
-            <td th:text="${reservation.remarks}"></td>
+            <td th:text="${reservation.remarks != null and !#strings.isEmpty(reservation.remarks) ? reservation.remarks : 'なし'}">
+                なし
+            </td>
         </tr>
+
         <tr>
             <th>ステータス</th>
-            <td th:text="${reservation.status}"></td>
+            <td th:text="${reservation.statusLabel}">
+                予約中
+            </td>
         </tr>
+
         <tr>
             <th>作成日時</th>
-            <td th:text="${reservation.createdAt}"></td>
+            <td th:text="${#temporals.format(reservation.createdAt, 'yyyy/MM/dd HH:mm')}">
+                2026/05/01 12:00
+            </td>
         </tr>
     </table>
 
-	<div class="d-flex justify-content-center gap-3">
-	    <a th:href="@{/admins/club/reservations}" class="btn btn-secondary">一覧へ戻る</a>
+    <div class="d-flex justify-content-center gap-3 mt-4">
 
-	    <a th:href="@{/admins/club/reservations/edit/{id}(id=${reservation.id})}"
-	       class="btn btn-primary">
-	       編集
-	    </a>
+        <a th:href="@{/members/club/reservations}" class="btn btn-secondary">
+            予約確認へ戻る
+        </a>
 
-		<form th:action="@{/admins/club/reservations/delete/{id}(id=${reservation.id})}"
-		      method="post"
-		      onsubmit="return confirm('本当に削除しますか？');">
-		    <button type="submit" class="btn btn-danger">削除</button>
-		</form>
-	</div>
+        <a th:href="@{/members/club/reservations/history}" class="btn btn-outline-secondary">
+            予約履歴へ戻る
+        </a>
+
+        <a th:if="${isCancelableReservation and not hasPendingCancelRequest}"
+           th:href="@{/members/club/reservations/{id}/cancel-request(id=${reservation.id})}"
+           class="btn btn-outline-danger">
+            キャンセル申請
+        </a>
+
+        <button th:if="${isCancelableReservation and hasPendingCancelRequest}"
+                type="button"
+                class="btn btn-outline-danger"
+                disabled>
+            キャンセル申請中
+        </button>
+
+    </div>
 
 </div>
 

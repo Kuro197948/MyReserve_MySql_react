@@ -66,4 +66,8 @@ public class MemberServiceImpl implements MemberService {
     public void updateCredentials(Member member) {
         memberMapper.updateCredentialsById(member);
     }
+    @Override
+    public Member getMemberByEmail(String email) {
+        return memberMapper.selectByEmail(email);
+    }
 }

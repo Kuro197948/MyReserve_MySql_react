@@ -22,6 +22,11 @@ public interface MemberService {
     void deleteMember(Integer id);
 
     List<MemberType> getTypeList();
+    
+    Member getMemberByEmail(String email);
 
     void updateCredentials(Member member);
+    
+    
 }
+

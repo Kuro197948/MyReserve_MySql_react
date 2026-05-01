@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">予約詳細</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+  <section class="reservation-detail-page">
+
+    <div class="reservation-page-header">
+      <h1 class="reservation-page-title">予約詳細</h1>
+      <p class="reservation-page-description">
+        予約内容の詳細を確認できます。
+      </p>
+    </div>
+
+    <div class="reservation-detail-card">
+
+      <div class="alert alert-success"
+           th:if="${successMessage != null}"
+           th:text="${successMessage}">
+        成功メッセージ
+      </div>
+
+      <div class="alert alert-danger"
+           th:if="${errorMessage != null}"
+           th:text="${errorMessage}">
+        エラーメッセージ
+      </div>
+
+      <div class="alert alert-warning"
+           th:if="${hasPendingCancelRequest}">
+        この予約はキャンセル申請中です。管理者の確認をお待ちください。
+      </div>
+
+      <div class="reservation-detail-header">
+        <h2 class="reservation-detail-title">
+          <span th:text="${reservation.courseName != null and !#strings.isEmpty(reservation.courseName) ? reservation.courseName : 'コース未設定'}">
+            コース名
+          </span>
+        </h2>
+
+        <span class="reservation-status"
+              th:text="${reservation.statusLabel}">
+          予約中
+        </span>
+      </div>
+
+      <div class="reservation-detail-body">
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">予約日</span>
+          <span class="reservation-detail-value"
+                th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd HH:mm')}">
+            2026/05/01 12:00
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">人数</span>
+          <span class="reservation-detail-value">
+            <span th:text="${reservation.peopleCount}">2</span>名
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">代表者名</span>
+          <span class="reservation-detail-value"
+                th:text="${reservation.representativeName}">
+            山田太郎
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">電話番号</span>
+          <span class="reservation-detail-value"
+                th:text="${reservation.phoneNumber}">
+            090-0000-0000
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">備考</span>
+          <span class="reservation-detail-value"
+                th:text="${reservation.remarks != null and !#strings.isEmpty(reservation.remarks) ? reservation.remarks : 'なし'}">
+            なし
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">予約作成日</span>
+          <span class="reservation-detail-value"
+                th:text="${#temporals.format(reservation.createdAt, 'yyyy/MM/dd HH:mm')}">
+            2026/05/01 12:00
+          </span>
+        </div>
+
+      </div>
+
+      <div class="reservation-detail-actions">
+
+        <a th:href="@{/members/club/reservations}" class="btn btn-outline-secondary">
+          予約確認へ戻る
+        </a>
+
+        <a th:href="@{/members/club/reservations/history}" class="btn btn-outline-secondary">
+          予約履歴へ戻る
+        </a>
+
+        <a th:if="${isCancelableReservation and not hasPendingCancelRequest}"
+           th:href="@{/members/club/reservations/{id}/cancel-request(id=${reservation.id})}"
+           class="btn btn-outline-danger">
+          キャンセル申請
+        </a>
+
+        <button th:if="${reservation.reserved and hasPendingCancelRequest}"
+                type="button"
+                class="btn btn-outline-danger"
+                disabled>
+          キャンセル申請中
+        </button>
+
+        <button th:if="${reservation.reserved and not isCancelableReservation and not hasPendingCancelRequest}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+          予約日を過ぎています
+        </button>
+
+        <button th:if="${reservation.canceled}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+          キャンセル済み
+        </button>
+
+        <button th:if="${reservation.completed}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+          完了済み
+        </button>
+
+        <button th:if="${isCancelableReservation and not hasPendingCancelRequest}"
+                type="button"
+                class="btn btn-outline-primary"
+                disabled>
+          変更申請
+        </button>
+
+      </div>
+
+      <p class="reservation-detail-note">
+        ※変更申請は今後追加予定です。
+      </p>
+
+    </div>
+
+  </section>
+</div>
+
+</body>
+</html>

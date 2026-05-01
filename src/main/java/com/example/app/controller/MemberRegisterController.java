@@ -39,9 +39,12 @@ public class MemberRegisterController {
 
         try {
             MemberRegisterResult result = memberRegisterService.register(form);
+
             model.addAttribute("member", result.getMember());
-            model.addAttribute("token", result.getPasswordResetToken());
+            model.addAttribute("token", result.getPasswordResetToken().getToken());
+
             return "members/registerComplete";
+
         } catch (IllegalArgumentException e) {
             errors.rejectValue("email", "error.duplicate.email", e.getMessage());
             return "members/register";

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.mapper.ReservationRequestMapper">
+
+    <resultMap id="reservationRequestResult"
+               type="com.example.app.domain.ReservationRequest"
+               autoMapping="true">
+    </resultMap>
+
+    <insert id="insert"
+            parameterType="com.example.app.domain.ReservationRequest"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO reservation_requests (
+            reservation_id,
+            member_id,
+            request_type,
+            request_reason,
+            requested_reservation_date,
+            requested_people_count,
+            requested_course_name,
+            requested_remarks,
+            status,
+            refund_status,
+            admin_comment
+        )
+        VALUES (
+            #{reservationId},
+            #{memberId},
+            #{requestType},
+            #{requestReason},
+            #{requestedReservationDate},
+            #{requestedPeopleCount},
+            #{requestedCourseName},
+            #{requestedRemarks},
+            #{status},
+            #{refundStatus},
+            #{adminComment}
+        )
+    </insert>
+
+    <select id="selectById"
+            parameterType="int"
+            resultMap="reservationRequestResult">
+        SELECT
+            id,
+            reservation_id,
+            member_id,
+            request_type,
+            request_reason,
+            requested_reservation_date,
+            requested_people_count,
+            requested_course_name,
+            requested_remarks,
+            status,
+            refund_status,
+            admin_comment,
+            created_at,
+            processed_at
+        FROM reservation_requests
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectAll"
+            resultMap="reservationRequestResult">
+        SELECT
+            id,
+            reservation_id,
+            member_id,
+            request_type,
+            request_reason,
+            requested_reservation_date,
+            requested_people_count,
+            requested_course_name,
+            requested_remarks,
+            status,
+            refund_status,
+            admin_comment,
+            created_at,
+            processed_at
+        FROM reservation_requests
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="selectPending"
+            resultMap="reservationRequestResult">
+        SELECT
+            id,
+            reservation_id,
+            member_id,
+            request_type,
+            request_reason,
+            requested_reservation_date,
+            requested_people_count,
+            requested_course_name,
+            requested_remarks,
+            status,
+            refund_status,
+            admin_comment,
+            created_at,
+            processed_at
+        FROM reservation_requests
+        WHERE status = 'PENDING'
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findPendingByReservationIdAndMemberId"
+            resultMap="reservationRequestResult">
+        SELECT
+            id,
+            reservation_id,
+            member_id,
+            request_type,
+            request_reason,
+            requested_reservation_date,
+            requested_people_count,
+            requested_course_name,
+            requested_remarks,
+            status,
+            refund_status,
+            admin_comment,
+            created_at,
+            processed_at
+        FROM reservation_requests
+        WHERE reservation_id = #{reservationId}
+          AND member_id = #{memberId}
+          AND status = 'PENDING'
+        LIMIT 1
+    </select>
+
+    <select id="selectPendingRequestViews"
+            resultType="com.example.app.domain.ReservationRequestView">
+        SELECT
+            rr.id,
+            rr.reservation_id,
+            rr.member_id,
+            rr.request_type,
+            rr.request_reason,
+            rr.status,
+            rr.refund_status,
+            rr.admin_comment,
+            rr.created_at,
+            rr.processed_at,
+
+            r.reservation_date,
+            r.people_count,
+            r.representative_name,
+            r.phone_number,
+            r.course_name,
+            r.status AS reservation_status,
+
+            m.name AS member_name,
+            m.email AS member_email
+
+        FROM reservation_requests rr
+        INNER JOIN reservations r
+            ON rr.reservation_id = r.id
+        INNER JOIN members m
+            ON rr.member_id = m.id
+        WHERE rr.status = 'PENDING'
+        ORDER BY rr.created_at DESC
+    </select>
+
+    <update id="updateProcessResult">
+        UPDATE reservation_requests
+        SET
+            status = #{status},
+            refund_status = #{refundStatus},
+            admin_comment = #{adminComment},
+            processed_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

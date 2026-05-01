@@ -14,7 +14,7 @@ function MemberLoginPage() {
       try {
         const response = await api.get("/api/members/me");
         if (response.data.loggedIn) {
-          window.location.href = "http://localhost:10000/members/club/home";
+          window.location.href = "http://localhost:8080/members/club/home";
         }
       } catch (error) {
         console.error("ログイン状態確認エラー:", error);
@@ -42,7 +42,7 @@ function MemberLoginPage() {
       const data = response.data;
 
       if (data.success) {
-        window.location.href = "http://localhost:10000/members/club/home";
+        window.location.href = "http://localhost:8080/members/club/home";
         return;
       }
 
