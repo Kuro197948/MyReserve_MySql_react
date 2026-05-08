@@ -33,8 +33,13 @@
       </div>
 
       <div class="alert alert-warning"
-           th:if="${hasPendingCancelRequest}">
+           th:if="${hasPendingCancelRequest == true}">
         この予約はキャンセル申請中です。管理者の確認をお待ちください。
+      </div>
+
+      <div class="alert alert-warning"
+           th:if="${hasPendingChangeRequest == true}">
+        この予約は変更申請中です。管理者の確認をお待ちください。
       </div>
 
       <div class="reservation-detail-header">
@@ -111,20 +116,33 @@
           予約履歴へ戻る
         </a>
 
-        <a th:if="${isCancelableReservation and not hasPendingCancelRequest}"
+        <a th:if="${isCancelableReservation == true and hasPendingRequest != true}"
            th:href="@{/members/club/reservations/{id}/cancel-request(id=${reservation.id})}"
            class="btn btn-outline-danger">
           キャンセル申請
         </a>
 
-        <button th:if="${reservation.reserved and hasPendingCancelRequest}"
+        <a th:if="${isCancelableReservation == true and hasPendingRequest != true}"
+           th:href="@{/members/club/reservations/{id}/change-request(id=${reservation.id})}"
+           class="btn btn-outline-primary">
+          変更申請
+        </a>
+
+        <button th:if="${reservation.reserved and hasPendingCancelRequest == true}"
                 type="button"
                 class="btn btn-outline-danger"
                 disabled>
           キャンセル申請中
         </button>
 
-        <button th:if="${reservation.reserved and not isCancelableReservation and not hasPendingCancelRequest}"
+        <button th:if="${reservation.reserved and hasPendingChangeRequest == true}"
+                type="button"
+                class="btn btn-outline-primary"
+                disabled>
+          変更申請中
+        </button>
+
+        <button th:if="${reservation.reserved and isCancelableReservation != true}"
                 type="button"
                 class="btn btn-secondary"
                 disabled>
@@ -145,18 +163,7 @@
           完了済み
         </button>
 
-        <button th:if="${isCancelableReservation and not hasPendingCancelRequest}"
-                type="button"
-                class="btn btn-outline-primary"
-                disabled>
-          変更申請
-        </button>
-
       </div>
-
-      <p class="reservation-detail-note">
-        ※変更申請は今後追加予定です。
-      </p>
 
     </div>
 

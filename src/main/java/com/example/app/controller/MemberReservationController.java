@@ -1,6 +1,8 @@
 package com.example.app.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -74,9 +76,17 @@ public class MemberReservationController {
         boolean hasPendingCancelRequest =
                 reservationRequestService.hasPendingCancelRequest(id, memberId);
 
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(id, memberId);
+
+        boolean hasPendingRequest =
+                hasPendingCancelRequest || hasPendingChangeRequest;
+
         model.addAttribute("title", "予約詳細");
         model.addAttribute("reservation", reservation);
         model.addAttribute("hasPendingCancelRequest", hasPendingCancelRequest);
+        model.addAttribute("hasPendingChangeRequest", hasPendingChangeRequest);
+        model.addAttribute("hasPendingRequest", hasPendingRequest);
         model.addAttribute("isCancelableReservation", isCancelableReservation(reservation));
 
         return "members/club/reservation-detail";
@@ -114,16 +124,25 @@ public class MemberReservationController {
             return "redirect:/members/club/reservations/" + id;
         }
 
-        /*
-         * すでにキャンセル申請中なら、フォームを表示せず詳細へ戻す。
-         */
         boolean hasPendingCancelRequest =
                 reservationRequestService.hasPendingCancelRequest(id, memberId);
+
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(id, memberId);
 
         if (hasPendingCancelRequest) {
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
                     "すでにキャンセル申請中です。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        if (hasPendingChangeRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでに変更申請中のため、キャンセル申請はできません。"
             );
 
             return "redirect:/members/club/reservations/" + id;
@@ -167,6 +186,18 @@ public class MemberReservationController {
             return "redirect:/members/club/reservations/" + id;
         }
 
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(id, memberId);
+
+        if (hasPendingChangeRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでに変更申請中のため、キャンセル申請はできません。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
         if (requestReason == null || requestReason.trim().isEmpty()) {
             model.addAttribute("title", "キャンセル申請");
             model.addAttribute("reservation", reservation);
@@ -197,6 +228,242 @@ public class MemberReservationController {
             model.addAttribute("requestReason", requestReason);
 
             return "members/club/cancel-request";
+
+        } catch (IllegalArgumentException e) {
+            return "redirect:/members/club/reservations";
+        }
+    }
+
+    @GetMapping("/reservations/{id}/change-request")
+    public String changeRequestForm(
+            @PathVariable Integer id,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        Integer memberId = (Integer) session.getAttribute("memberId");
+
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
+        }
+
+        Reservation reservation = reservationService.findByIdAndMemberId(id, memberId);
+
+        if (reservation == null) {
+            return "redirect:/members/club/reservations";
+        }
+
+        /*
+         * 予約中かつ予約日が今日以降の予約だけ変更申請可能。
+         */
+        if (!isCancelableReservation(reservation)) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "この予約は変更申請できません。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        boolean hasPendingCancelRequest =
+                reservationRequestService.hasPendingCancelRequest(id, memberId);
+
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(id, memberId);
+
+        if (hasPendingCancelRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでにキャンセル申請中のため、変更申請はできません。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        if (hasPendingChangeRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでに変更申請中です。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        model.addAttribute("title", "変更申請");
+        model.addAttribute("reservation", reservation);
+
+        return "members/club/change-request";
+    }
+
+    @PostMapping("/reservations/{id}/change-request")
+    public String submitChangeRequest(
+            @PathVariable Integer id,
+            @RequestParam("requestedReservationDate") String requestedReservationDate,
+            @RequestParam("requestedPeopleCount") Integer requestedPeopleCount,
+            @RequestParam(value = "requestedCourseName", required = false) String requestedCourseName,
+            @RequestParam(value = "requestedRemarks", required = false) String requestedRemarks,
+            @RequestParam("requestReason") String requestReason,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        Integer memberId = (Integer) session.getAttribute("memberId");
+
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
+        }
+
+        Reservation reservation = reservationService.findByIdAndMemberId(id, memberId);
+
+        if (reservation == null) {
+            return "redirect:/members/club/reservations";
+        }
+
+        if (!isCancelableReservation(reservation)) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "この予約は変更申請できません。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        boolean hasPendingCancelRequest =
+                reservationRequestService.hasPendingCancelRequest(id, memberId);
+
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(id, memberId);
+
+        if (hasPendingCancelRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでにキャンセル申請中のため、変更申請はできません。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        if (hasPendingChangeRequest) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "すでに変更申請中です。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+        }
+
+        if (requestedReservationDate == null || requestedReservationDate.trim().isEmpty()) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    "変更希望日時を入力してください。",
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
+        }
+
+        if (requestedPeopleCount == null || requestedPeopleCount <= 0) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    "変更希望人数は1名以上で入力してください。",
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
+        }
+
+        if (requestReason == null || requestReason.trim().isEmpty()) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    "変更理由を入力してください。",
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
+        }
+
+        LocalDateTime parsedRequestedReservationDate;
+
+        try {
+            parsedRequestedReservationDate =
+                    LocalDateTime.parse(requestedReservationDate.trim());
+
+        } catch (DateTimeParseException e) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    "変更希望日時の形式が正しくありません。",
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
+        }
+
+        if (parsedRequestedReservationDate.toLocalDate().isBefore(LocalDate.now())) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    "過去の日付には変更申請できません。",
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
+        }
+
+        try {
+            reservationRequestService.createChangeRequest(
+                    id,
+                    memberId,
+                    requestReason.trim(),
+                    parsedRequestedReservationDate,
+                    requestedPeopleCount,
+                    trimToNull(requestedCourseName),
+                    trimToNull(requestedRemarks)
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "変更申請を送信しました。管理者の確認をお待ちください。"
+            );
+
+            return "redirect:/members/club/reservations/" + id;
+
+        } catch (IllegalStateException e) {
+            setChangeRequestFormAttributes(
+                    model,
+                    reservation,
+                    e.getMessage(),
+                    requestedReservationDate,
+                    requestedPeopleCount,
+                    requestedCourseName,
+                    requestedRemarks,
+                    requestReason
+            );
+
+            return "members/club/change-request";
 
         } catch (IllegalArgumentException e) {
             return "redirect:/members/club/reservations";
@@ -267,7 +534,7 @@ public class MemberReservationController {
     }
 
     /*
-     * キャンセル申請できる予約か判定する。
+     * キャンセル申請・変更申請できる予約か判定する。
      */
     private boolean isCancelableReservation(Reservation reservation) {
 
@@ -302,5 +569,33 @@ public class MemberReservationController {
         return reservation.getReservationDate()
                 .toLocalDate()
                 .isBefore(LocalDate.now());
+    }
+
+    private void setChangeRequestFormAttributes(
+            Model model,
+            Reservation reservation,
+            String errorMessage,
+            String requestedReservationDate,
+            Integer requestedPeopleCount,
+            String requestedCourseName,
+            String requestedRemarks,
+            String requestReason) {
+
+        model.addAttribute("title", "変更申請");
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("errorMessage", errorMessage);
+        model.addAttribute("requestedReservationDate", requestedReservationDate);
+        model.addAttribute("requestedPeopleCount", requestedPeopleCount);
+        model.addAttribute("requestedCourseName", requestedCourseName);
+        model.addAttribute("requestedRemarks", requestedRemarks);
+        model.addAttribute("requestReason", requestReason);
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        return value.trim();
     }
 }

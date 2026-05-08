@@ -34,4 +34,6 @@ public interface MemberMapper {
     
     int updateMemberType(@Param("memberId") Integer memberId,
             @Param("typeId") Integer typeId);
+    
+    int countAllMembers();
 }

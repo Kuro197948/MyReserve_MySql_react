@@ -1,5 +1,6 @@
 package com.example.app.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -81,4 +82,15 @@ public interface ReservationMapper {
      * 会員側ホーム：次回予約を1件取得
      */
     Reservation findNextReservationByMemberId(@Param("memberId") Integer memberId);
+    
+    
+    int countTodayReserved(
+    	    @Param("start") LocalDateTime start,
+    	    @Param("end") LocalDateTime end
+    	);
+
+    	int countMonthlyReserved(
+    	    @Param("start") LocalDateTime start,
+    	    @Param("end") LocalDateTime end
+    	);
 }

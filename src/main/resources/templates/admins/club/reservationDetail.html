@@ -21,8 +21,12 @@
         エラーが発生しました。
     </div>
 
-    <div th:if="${hasPendingCancelRequest}" class="alert alert-warning text-center">
-        この予約はキャンセル申請中です。管理者の確認をお待ちください。
+    <div th:if="${hasPendingCancelRequest == true}" class="alert alert-warning text-center">
+        この予約はキャンセル申請中です。申請内容を確認して承認・却下を行ってください。
+    </div>
+
+    <div th:if="${hasPendingChangeRequest == true}" class="alert alert-warning text-center">
+        この予約は変更申請中です。申請内容を確認して承認・却下を行ってください。
     </div>
 
     <table class="table table-bordered align-middle">
@@ -71,8 +75,22 @@
 
         <tr>
             <th>ステータス</th>
-            <td th:text="${reservation.statusLabel}">
-                予約中
+            <td>
+                <span class="reservation-status-badge"
+                      th:classappend="${reservation.status == 'RESERVED'} ? ' status-reserved' : ' status-default'"
+                      th:text="${reservation.statusLabel}">
+                    予約中
+                </span>
+
+                <span th:if="${hasPendingCancelRequest == true}"
+                      class="reservation-request-badge reservation-request-cancel-badge ms-1">
+                    キャンセル申請中
+                </span>
+
+                <span th:if="${hasPendingChangeRequest == true}"
+                      class="reservation-request-badge reservation-request-change-badge ms-1">
+                    変更申請中
+                </span>
             </td>
         </tr>
 
@@ -84,27 +102,64 @@
         </tr>
     </table>
 
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
 
-        <a th:href="@{/members/club/reservations}" class="btn btn-secondary">
-            予約確認へ戻る
+        <a th:href="@{/admins/club/reservations}" class="btn btn-outline-secondary">
+            現在予約へ戻る
         </a>
 
-        <a th:href="@{/members/club/reservations/history}" class="btn btn-outline-secondary">
+        <a th:href="@{/admins/club/reservations/history}" class="btn btn-outline-secondary">
             予約履歴へ戻る
         </a>
 
-        <a th:if="${isCancelableReservation and not hasPendingCancelRequest}"
-           th:href="@{/members/club/reservations/{id}/cancel-request(id=${reservation.id})}"
-           class="btn btn-outline-danger">
-            キャンセル申請
+        <a th:if="${isCancelableReservation == true and hasPendingRequest != true}"
+           th:href="@{/admins/club/reservations/edit/{id}(id=${reservation.id})}"
+           class="btn btn-outline-primary">
+            予約情報を編集
         </a>
 
-        <button th:if="${isCancelableReservation and hasPendingCancelRequest}"
+        <form th:if="${isCancelableReservation == true and hasPendingRequest != true}"
+              th:action="@{/admins/club/reservations/delete/{id}(id=${reservation.id})}"
+              method="post"
+              onsubmit="return confirm('この予約をキャンセル済みにして、予約履歴へ移動しますか？');">
+            <button type="submit" class="btn btn-outline-danger">
+                キャンセル済みにする
+            </button>
+        </form>
+
+        <button th:if="${hasPendingCancelRequest == true}"
                 type="button"
                 class="btn btn-outline-danger"
                 disabled>
             キャンセル申請中
+        </button>
+
+        <button th:if="${hasPendingChangeRequest == true}"
+                type="button"
+                class="btn btn-outline-primary"
+                disabled>
+            変更申請中
+        </button>
+
+        <button th:if="${reservation.canceled}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+            キャンセル済み
+        </button>
+
+        <button th:if="${reservation.completed}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+            完了済み
+        </button>
+
+        <button th:if="${reservation.reserved and isCancelableReservation != true}"
+                type="button"
+                class="btn btn-secondary"
+                disabled>
+            予約日を過ぎています
         </button>
 
     </div>

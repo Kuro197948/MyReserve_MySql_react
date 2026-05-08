@@ -27,6 +27,8 @@ public interface MemberService {
 
     void updateCredentials(Member member);
     
+    int countAllMembers();
+    
     
 }
 

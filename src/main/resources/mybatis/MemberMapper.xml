@@ -118,5 +118,10 @@
         DELETE FROM members
         WHERE id = #{id}
     </delete>
+    
+    <select id="countAllMembers" resultType="int">
+    SELECT COUNT(*)
+    FROM members
+</select>
 
 </mapper>

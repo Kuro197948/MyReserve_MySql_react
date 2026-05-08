@@ -10,9 +10,15 @@
 </head>
 <body>
 
-<div class="container mt-4">
+<div class="container mt-4 admin-reservation-page">
 
-    <h1 class="mb-4 text-center">予約一覧</h1>
+    <div class="admin-page-header text-center mb-4">
+        <p class="admin-page-label mb-2">RESERVATION MANAGEMENT</p>
+        <h1 class="mb-2">現在予約</h1>
+        <p class="admin-page-description mb-0">
+            予約済み・来店予定の予約を確認できます。キャンセル済み・完了済みの予約は予約履歴から確認してください。
+        </p>
+    </div>
 
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
         処理が完了しました。
@@ -22,79 +28,137 @@
         エラーが発生しました。
     </div>
 
-    <div th:if="${reservations != null and !#lists.isEmpty(reservations)}">
+    <div th:if="${reservations != null and !#lists.isEmpty(reservations)}"
+         class="admin-table-panel">
 
-        <table class="table table-striped table-bordered table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>予約日時</th>
-                    <th>人数</th>
-                    <th>代表者名</th>
-                    <th>電話番号</th>
-                    <th>コース</th>
-                    <th>ステータス</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
+        <div class="admin-table-top mb-3">
+            <div>
+                <h2 class="admin-section-title mb-1">予約一覧</h2>
+                <p class="admin-section-description mb-0">
+                    現在有効な予約のみ表示しています。
+                </p>
+            </div>
 
-            <tbody>
-                <tr th:each="reservation : ${reservations}">
-                    <td th:text="${reservation.id}">1</td>
+            <a th:href="@{/admins/club/reservations/history}"
+               class="btn btn-outline-primary admin-top-link-button">
+                予約履歴を見る
+            </a>
+        </div>
 
-                    <td th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd HH:mm')}">
-                        2026/05/01 12:00
-                    </td>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover align-middle admin-reservation-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>予約日時</th>
+                        <th>人数</th>
+                        <th>代表者名</th>
+                        <th>電話番号</th>
+                        <th>コース</th>
+                        <th>ステータス</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
 
-                    <td>
-                        <span th:text="${reservation.peopleCount}">2</span>名
-                    </td>
+                <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td class="admin-table-id" th:text="${reservation.id}">1</td>
 
-                    <td th:text="${reservation.representativeName}">山田太郎</td>
+                        <td th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd HH:mm')}">
+                            2026/05/01 12:00
+                        </td>
 
-                    <td th:text="${reservation.phoneNumber}">090-0000-0000</td>
+                        <td>
+                            <span th:text="${reservation.peopleCount}">2</span>名
+                        </td>
 
-                    <td th:text="${reservation.courseName != null and !#strings.isEmpty(reservation.courseName) ? reservation.courseName : 'コース未設定'}">
-                        コース未設定
-                    </td>
+                        <td th:text="${reservation.representativeName}">山田太郎</td>
 
-                    <td th:text="${reservation.statusLabel}">
-                        予約中
-                    </td>
+                        <td th:text="${reservation.phoneNumber}">090-0000-0000</td>
 
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a th:href="@{/admins/club/reservations/{id}(id=${reservation.id})}"
-                               class="btn btn-sm btn-primary">
-                                詳細
-                            </a>
+                        <td th:text="${reservation.courseName != null and !#strings.isEmpty(reservation.courseName) ? reservation.courseName : 'コース未設定'}">
+                            コース未設定
+                        </td>
 
-                            <form th:action="@{/admins/club/reservations/delete/{id}(id=${reservation.id})}"
-                                  method="post"
-                                  onsubmit="return confirm('この予約をキャンセル扱いにして、予約履歴へ移動しますか？');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    キャンセル扱い
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        <td>
+                            <span class="reservation-status-badge"
+                                  th:classappend="${reservation.status == 'RESERVED'} ? ' status-reserved' : ' status-default'"
+                                  th:text="${reservation.statusLabel}">
+                                予約中
+                            </span>
+
+							<span th:if="${pendingRequestTypeMap != null and pendingRequestTypeMap.containsKey(reservation.id)
+							              and pendingRequestTypeMap.get(reservation.id) == 'CANCEL'}"
+							      class="reservation-request-badge reservation-request-cancel-badge ms-1">
+							    キャンセル申請中
+							</span>
+
+							<span th:if="${pendingRequestTypeMap != null and pendingRequestTypeMap.containsKey(reservation.id)
+							              and pendingRequestTypeMap.get(reservation.id) == 'CHANGE'}"
+							      class="reservation-request-badge reservation-request-change-badge ms-1">
+							    変更申請中
+							</span>
+                        </td>
+
+						<td>
+						    <div class="admin-action-buttons">
+
+						        <a th:href="@{/admins/club/reservations/{id}(id=${reservation.id})}"
+						           class="btn btn-sm btn-primary admin-action-button">
+						            詳細
+						        </a>
+
+						        <!-- 申請中ではない予約だけ、管理者によるキャンセル済み処理を許可する -->
+						        <form th:if="${pendingRequestTypeMap == null or !pendingRequestTypeMap.containsKey(reservation.id)}"
+						              th:action="@{/admins/club/reservations/delete/{id}(id=${reservation.id})}"
+						              method="post"
+						              onsubmit="return confirm('この予約をキャンセル済みにして、予約履歴へ移動しますか？');">
+						            <button type="submit"
+						                    class="btn btn-sm btn-outline-danger admin-action-button">
+						                キャンセル済みにする
+						            </button>
+						        </form>
+
+								<!-- キャンセル申請中の場合 -->
+								<a th:if="${pendingRequestTypeMap != null
+								           and pendingRequestTypeMap.containsKey(reservation.id)
+								           and pendingRequestTypeMap.get(reservation.id) == 'CANCEL'}"
+								   th:href="@{/admins/club/reservation-requests}"
+								   class="btn btn-sm btn-outline-danger admin-action-button">
+								    キャンセル申請対応へ
+								</a>
+
+								<!-- 変更申請中の場合 -->
+								<a th:if="${pendingRequestTypeMap != null
+								           and pendingRequestTypeMap.containsKey(reservation.id)
+								           and pendingRequestTypeMap.get(reservation.id) == 'CHANGE'}"
+								   th:href="@{/admins/club/reservation-requests}"
+								   class="btn btn-sm btn-outline-primary admin-action-button">
+								    変更申請対応へ
+								</a>
+
+						    </div>
+						</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
     <div th:if="${reservations == null or #lists.isEmpty(reservations)}"
-         class="alert alert-info text-center">
+         class="alert alert-info text-center admin-empty-message">
         現在、予約はありません。
     </div>
 
-    <div class="text-center mt-3">
-        <a th:href="@{/admins/club/reservations/history}" class="btn btn-outline-primary">
+    <div class="admin-page-bottom-actions text-center mt-4">
+        <a th:href="@{/admins/club/reservations/history}"
+           class="btn btn-outline-primary admin-bottom-button">
             予約履歴を見る
         </a>
 
-        <a th:href="@{/admins/club/home}" class="btn btn-secondary ms-2">
+        <a th:href="@{/admins/club/home}"
+           class="btn btn-secondary admin-bottom-button">
             管理ホームへ戻る
         </a>
     </div>

@@ -731,3 +731,345 @@ body {
     color: #6b7280;
     border-color: #d1d5db;
 }
+
+/* ==============================
+   管理側：ホーム
+================================ */
+
+.admin-home-page {
+  max-width: 1040px;
+}
+
+.admin-home-header {
+  margin-bottom: 26px;
+}
+
+.admin-home-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background-color: rgba(53, 208, 255, 0.14);
+  border: 1px solid rgba(53, 208, 255, 0.35);
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.admin-home-title {
+  margin-bottom: 10px;
+}
+
+.admin-home-description {
+  color: #555;
+  margin-bottom: 0;
+}
+
+.admin-home-alert {
+  max-width: 760px;
+  margin: 0 auto 22px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.08);
+}
+
+.admin-home-alert-badge {
+  display: inline-block;
+  min-width: 48px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #ea580c;
+  color: #fff;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.admin-home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-menu-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 132px;
+  padding: 22px 24px;
+  background-color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(53, 208, 255, 0.24);
+  border-radius: 18px;
+  text-decoration: none;
+  color: #222;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.admin-menu-card:hover {
+  transform: translateY(-3px);
+  color: #222;
+  border-color: rgba(53, 208, 255, 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+}
+
+.admin-menu-card-main {
+  background-color: #fff8e1;
+  border-color: #ffd966;
+}
+
+.admin-menu-card-main:hover {
+  border-color: #ffb703;
+  box-shadow: 0 14px 34px rgba(255, 183, 3, 0.18);
+}
+
+.admin-menu-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+  background-color: #eef7ff;
+  font-size: 1.5rem;
+}
+
+.admin-menu-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admin-menu-description {
+  color: #666;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.admin-home-logout-wrap {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.admin-logout-button {
+  display: inline-block;
+  min-width: 180px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.65);
+  border: 1px solid #b6e6ff;
+  color: #222;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.admin-logout-button:hover {
+  transform: translateY(-2px);
+  background-color: #eef9ff;
+  color: #222;
+  box-shadow: 0 8px 20px rgba(53, 208, 255, 0.16);
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .admin-home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-home-alert {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+/* =========================
+   管理側 現在予約画面
+========================= */
+
+.admin-reservation-page {
+  max-width: 1180px;
+}
+
+.admin-page-header {
+  margin-top: 16px;
+}
+
+.admin-page-label {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.admin-page-description {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.admin-table-panel {
+  padding: 1.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 18px;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.admin-table-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.admin-section-description {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.admin-top-link-button {
+  min-width: 160px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.admin-reservation-table {
+  margin-bottom: 0;
+}
+
+.admin-reservation-table th,
+.admin-reservation-table td {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-table-id {
+  font-weight: 700;
+  color: #495057;
+}
+
+.reservation-status-badge {
+  display: inline-block;
+  min-width: 72px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.status-reserved {
+  background-color: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+}
+
+.status-default {
+  background-color: #e9ecef;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.reservation-request-badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.admin-action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-action-buttons form {
+  margin: 0;
+}
+
+.admin-action-button {
+  min-width: 120px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.admin-empty-message {
+  border-radius: 14px;
+}
+
+.admin-page-bottom-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-bottom-button {
+  min-width: 170px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .admin-table-panel {
+    padding: 1rem;
+  }
+
+  .admin-action-button {
+    min-width: 100%;
+  }
+
+  .admin-action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-action-buttons form {
+    width: 100%;
+  }
+
+  .admin-top-link-button,
+  .admin-bottom-button {
+    width: 100%;
+  }
+}
+
+.reservation-request-badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.reservation-request-cancel-badge {
+  background-color: #dc3545;
+}
+
+.reservation-request-change-badge {
+  background-color: #0d6efd;
+}

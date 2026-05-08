@@ -70,4 +70,9 @@ public class MemberServiceImpl implements MemberService {
     public Member getMemberByEmail(String email) {
         return memberMapper.selectByEmail(email);
     }
+    
+    @Override
+    public int countAllMembers() {
+        return memberMapper.countAllMembers();
+    }
 }

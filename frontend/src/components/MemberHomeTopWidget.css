@@ -1,7 +1,27 @@
+.notice-detail-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+
+
+.notice-detail-link:hover {
+  background: #dbeafe;
+  text-decoration: none;
+}
+
 .member-home-top {
-  max-width: 1040px;
-  margin: 32px auto 40px;
-  padding: 0 20px;
+  width: 100%;
+  margin-bottom: 32px;
 }
 
 .member-home-panel {

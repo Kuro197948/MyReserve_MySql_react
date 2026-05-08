@@ -13,11 +13,12 @@ public interface ReservationRequestMapper {
 
     void insert(ReservationRequest reservationRequest);
 
-    ReservationRequest selectById(Integer id);
+    ReservationRequest selectById(@Param("id") Integer id);
 
     List<ReservationRequest> selectAll();
 
     List<ReservationRequest> selectPending();
+    
 
     ReservationRequest findPendingByReservationIdAndMemberId(
             @Param("reservationId") Integer reservationId,
@@ -25,7 +26,10 @@ public interface ReservationRequestMapper {
     );
 
     List<ReservationRequestView> selectPendingRequestViews();
-
+    
+    int countPending();
+    int countPendingCancelRequests();
+    int countPendingRequests();
     void updateProcessResult(
             @Param("id") Integer id,
             @Param("status") String status,

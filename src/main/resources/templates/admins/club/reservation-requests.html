@@ -12,46 +12,68 @@
   <section class="admin-request-page">
 
     <div class="admin-request-header">
+      <p class="admin-page-label mb-2">REQUEST MANAGEMENT</p>
       <h1 class="admin-request-title">予約申請一覧</h1>
       <p class="admin-request-description">
-        会員から送信されたキャンセル申請・変更申請を確認できます。
+        会員から送信されたキャンセル申請・変更申請を確認し、承認または却下できます。
       </p>
     </div>
-		
-	<div class="alert alert-success"
-	     th:if="${successMessage != null}"
-	     th:text="${successMessage}">
-	  成功メッセージ
-	</div>
 
-	<div class="alert alert-danger"
-	     th:if="${errorMessage != null}"
-	     th:text="${errorMessage}">
-	  エラーメッセージ
-	</div>
+    <div class="alert alert-success"
+         th:if="${successMessage != null}"
+         th:text="${successMessage}">
+      成功メッセージ
+    </div>
+
+    <div class="alert alert-danger"
+         th:if="${errorMessage != null}"
+         th:text="${errorMessage}">
+      エラーメッセージ
+    </div>
+
     <div th:if="${requests != null and !#lists.isEmpty(requests)}">
 
       <div class="admin-request-card" th:each="req : ${requests}">
 
         <div class="admin-request-card-header">
           <div>
-            <span class="admin-request-type"
-                  th:text="${req.requestType == 'CANCEL' ? 'キャンセル申請' : '変更申請'}">
+            <span th:if="${req.requestType == 'CANCEL'}"
+                  class="reservation-request-badge reservation-request-cancel-badge">
               キャンセル申請
             </span>
 
-            <h2 class="admin-request-card-title">
-              <span th:text="${req.courseName}">コース名</span>
+            <span th:if="${req.requestType == 'CHANGE'}"
+                  class="reservation-request-badge reservation-request-change-badge">
+              変更申請
+            </span>
+
+            <h2 class="admin-request-card-title mt-2">
+              <span th:text="${req.courseName != null and !#strings.isEmpty(req.courseName) ? req.courseName : 'コース未設定'}">
+                コース名
+              </span>
             </h2>
           </div>
 
           <span class="admin-request-status"
-                th:text="${req.status == 'PENDING' ? '承認待ち' : req.status}">
+                th:text="${req.statusLabel}">
             承認待ち
           </span>
         </div>
 
+        <div th:if="${req.requestType == 'CANCEL'}"
+             class="alert alert-danger mt-3 mb-3">
+          この申請を承認すると、対象予約はキャンセル済みになり、予約履歴へ移動します。
+        </div>
+
+        <div th:if="${req.requestType == 'CHANGE'}"
+             class="alert alert-primary mt-3 mb-3">
+          この申請を承認すると、下記の変更希望内容で予約情報が更新されます。
+        </div>
+
         <div class="admin-request-body">
+
+          <h3 class="admin-request-section-title">会員情報</h3>
+
           <p>
             <strong>会員名：</strong>
             <span th:text="${req.memberName}">会員名</span>
@@ -62,10 +84,14 @@
             <span th:text="${req.memberEmail}">mail@example.com</span>
           </p>
 
+          <hr>
+
+          <h3 class="admin-request-section-title">現在の予約内容</h3>
+
           <p>
-            <strong>予約日：</strong>
-            <span th:text="${#temporals.format(req.reservationDate, 'yyyy/MM/dd')}">
-              2026/05/01
+            <strong>予約日時：</strong>
+            <span th:text="${#temporals.format(req.reservationDate, 'yyyy/MM/dd HH:mm')}">
+              2026/05/01 18:00
             </span>
           </p>
 
@@ -85,8 +111,62 @@
           </p>
 
           <p>
+            <strong>現在のコース：</strong>
+            <span th:text="${req.courseName != null and !#strings.isEmpty(req.courseName) ? req.courseName : 'コース未設定'}">
+              コース未設定
+            </span>
+          </p>
+
+          <div th:if="${req.requestType == 'CHANGE'}">
+            <hr>
+
+            <h3 class="admin-request-section-title">変更希望内容</h3>
+
+            <p>
+              <strong>変更希望日時：</strong>
+              <span th:if="${req.requestedReservationDate != null}"
+                    th:text="${#temporals.format(req.requestedReservationDate, 'yyyy/MM/dd HH:mm')}">
+                2026/05/02 19:00
+              </span>
+              <span th:if="${req.requestedReservationDate == null}">
+                変更なし
+              </span>
+            </p>
+
+            <p>
+              <strong>変更希望人数：</strong>
+              <span th:if="${req.requestedPeopleCount != null}">
+                <span th:text="${req.requestedPeopleCount}">2</span>名
+              </span>
+              <span th:if="${req.requestedPeopleCount == null}">
+                変更なし
+              </span>
+            </p>
+
+            <p>
+              <strong>変更希望コース：</strong>
+              <span th:text="${req.requestedCourseName != null and !#strings.isEmpty(req.requestedCourseName) ? req.requestedCourseName : '変更なし'}">
+                変更なし
+              </span>
+            </p>
+
+            <p>
+              <strong>変更希望備考：</strong>
+              <span th:text="${req.requestedRemarks != null and !#strings.isEmpty(req.requestedRemarks) ? req.requestedRemarks : '変更なし'}">
+                変更なし
+              </span>
+            </p>
+          </div>
+
+          <hr>
+
+          <h3 class="admin-request-section-title">申請内容</h3>
+
+          <p>
             <strong>申請理由：</strong>
-            <span th:text="${req.requestReason}">申請理由</span>
+            <span th:text="${req.requestReason != null and !#strings.isEmpty(req.requestReason) ? req.requestReason : '理由なし'}">
+              申請理由
+            </span>
           </p>
 
           <p>
@@ -97,27 +177,51 @@
           </p>
         </div>
 
-		<div class="admin-request-actions">
+        <div class="admin-request-actions">
 
-		  <form th:action="@{/admins/club/reservation-requests/{id}/approve(id=${req.id})}"
-		        method="post">
-		    <input type="hidden" name="adminComment" value="キャンセル申請を承認しました。">
+          <form th:action="@{/admins/club/reservation-requests/{id}/approve(id=${req.id})}"
+                method="post"
+                onsubmit="return confirm('この予約申請を承認します。よろしいですか？');">
 
-		    <button type="submit" class="btn btn-outline-success">
-		      承認する
-		    </button>
-		  </form>
+            <input type="hidden"
+                   name="adminComment"
+                   th:value="${req.requestType == 'CHANGE' ? '変更申請を承認しました。' : 'キャンセル申請を承認しました。'}">
 
-		  <form th:action="@{/admins/club/reservation-requests/{id}/reject(id=${req.id})}"
-		        method="post">
-		    <input type="hidden" name="adminComment" value="キャンセル申請を却下しました。">
+            <button th:if="${req.requestType == 'CANCEL'}"
+                    type="submit"
+                    class="btn btn-outline-success">
+              キャンセル申請を承認する
+            </button>
 
-		    <button type="submit" class="btn btn-outline-danger">
-		      却下する
-		    </button>
-		  </form>
+            <button th:if="${req.requestType == 'CHANGE'}"
+                    type="submit"
+                    class="btn btn-outline-success">
+              変更申請を承認する
+            </button>
+          </form>
 
-		</div>
+          <form th:action="@{/admins/club/reservation-requests/{id}/reject(id=${req.id})}"
+                method="post"
+                onsubmit="return confirm('この予約申請を却下します。よろしいですか？');">
+
+            <input type="hidden"
+                   name="adminComment"
+                   th:value="${req.requestType == 'CHANGE' ? '変更申請を却下しました。' : 'キャンセル申請を却下しました。'}">
+
+            <button th:if="${req.requestType == 'CANCEL'}"
+                    type="submit"
+                    class="btn btn-outline-danger">
+              キャンセル申請を却下する
+            </button>
+
+            <button th:if="${req.requestType == 'CHANGE'}"
+                    type="submit"
+                    class="btn btn-outline-danger">
+              変更申請を却下する
+            </button>
+          </form>
+
+        </div>
 
       </div>
 
@@ -129,7 +233,11 @@
     </div>
 
     <div class="admin-request-back-wrap">
-      <a th:href="@{/admins/club/home}" class="admin-request-back-link">
+      <a th:href="@{/admins/club/reservations}" class="btn btn-outline-secondary">
+        現在予約へ戻る
+      </a>
+
+      <a th:href="@{/admins/club/home}" class="btn btn-secondary ms-2">
         管理者ホームへ戻る
       </a>
     </div>

@@ -1,0 +1,146 @@
+.member-news-section {
+  width: 100%;
+}
+
+.member-news-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.member-news-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.member-news-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-news-title {
+  margin: 0;
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.member-news-new-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+
+
+.member-news-more {
+  margin-top: 8px;
+  color: #2563eb;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.member-news-more:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+.member-news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.member-news-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+}
+
+.member-news-card-main {
+  min-width: 0;
+}
+
+.member-news-card-title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.member-news-card-title a {
+  color: #1d4ed8;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.member-news-card-title a:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+.member-news-author {
+  margin: 0 0 8px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.member-news-body {
+  margin: 0;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.member-news-date {
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.member-news-empty {
+  padding: 20px 22px;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  text-align: center;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .member-news-heading {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .member-news-more {
+    margin-top: 0;
+  }
+
+  .member-news-card {
+    grid-template-columns: 1fr;
+  }
+
+  .member-news-date {
+    white-space: normal;
+  }
+}

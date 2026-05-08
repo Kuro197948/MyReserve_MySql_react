@@ -265,4 +265,22 @@
     ORDER BY reservation_date ASC, created_at DESC
     LIMIT 1
 </select>
+
+<select id="countTodayReserved" resultType="int">
+    SELECT COUNT(*)
+    FROM reservations
+    WHERE status = 'RESERVED'
+      AND reservation_date &gt;= #{start}
+      AND reservation_date &lt; #{end}
+      AND admin_deleted = false
+</select>
+
+<select id="countMonthlyReserved" resultType="int">
+    SELECT COUNT(*)
+    FROM reservations
+    WHERE status = 'RESERVED'
+      AND reservation_date &gt;= #{start}
+      AND reservation_date &lt; #{end}
+      AND admin_deleted = false
+</select>
 </mapper>

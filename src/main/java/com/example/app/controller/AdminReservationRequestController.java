@@ -64,14 +64,14 @@ public class AdminReservationRequestController {
         }
 
         try {
-            reservationRequestService.approveCancelRequest(
+            reservationRequestService.approveRequest(
                     id,
                     adminComment == null ? "" : adminComment.trim()
             );
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
-                    "キャンセル申請を承認しました。"
+                    "予約申請を承認しました。"
             );
 
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -95,14 +95,14 @@ public class AdminReservationRequestController {
         }
 
         try {
-            reservationRequestService.rejectCancelRequest(
+            reservationRequestService.rejectRequest(
                     id,
                     adminComment == null ? "" : adminComment.trim()
             );
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
-                    "キャンセル申請を却下しました。"
+                    "予約申請を却下しました。"
             );
 
         } catch (IllegalArgumentException | IllegalStateException e) {

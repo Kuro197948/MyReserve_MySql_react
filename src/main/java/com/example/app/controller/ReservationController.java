@@ -1,5 +1,8 @@
 package com.example.app.controller;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -10,15 +13,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.app.domain.Reservation;
+import com.example.app.service.ReservationRequestService;
 import com.example.app.service.ReservationService;
 
 @Controller
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final ReservationRequestService reservationRequestService;
 
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(
+            ReservationService reservationService,
+            ReservationRequestService reservationRequestService) {
         this.reservationService = reservationService;
+        this.reservationRequestService = reservationRequestService;
     }
 
     // 会員側：予約入力画面を開く
@@ -72,7 +80,7 @@ public class ReservationController {
         return "members/club/reservationComplete";
     }
 
-    // 管理側：予約一覧
+    // 管理側：現在予約一覧
     @GetMapping("/admins/club/reservations")
     public String showReservationList(
             Model model,
@@ -84,8 +92,18 @@ public class ReservationController {
             return "redirect:/admins/adminslogin";
         }
 
-        model.addAttribute("title", "予約一覧");
+        Map<Integer, String> pendingRequestTypeMap =
+                reservationRequestService.findPendingRequestViews()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                request -> request.getReservationId(),
+                                request -> request.getRequestType(),
+                                (first, second) -> first
+                        ));
+
+        model.addAttribute("title", "現在予約");
         model.addAttribute("reservations", reservationService.selectAll());
+        model.addAttribute("pendingRequestTypeMap", pendingRequestTypeMap);
 
         return "admins/club/reservationList";
     }
@@ -109,8 +127,32 @@ public class ReservationController {
             return "redirect:/admins/club/reservations";
         }
 
+        boolean isCancelableReservation = "RESERVED".equals(reservation.getStatus());
+
+        boolean hasPendingCancelRequest =
+                reservationRequestService.hasPendingCancelRequest(
+                        reservation.getId(),
+                        reservation.getMemberId()
+                );
+
+        boolean hasPendingChangeRequest =
+                reservationRequestService.hasPendingChangeRequest(
+                        reservation.getId(),
+                        reservation.getMemberId()
+                );
+
+        boolean hasPendingRequest =
+                reservationRequestService.hasPendingRequest(
+                        reservation.getId(),
+                        reservation.getMemberId()
+                );
+
         model.addAttribute("title", "予約詳細");
         model.addAttribute("reservation", reservation);
+        model.addAttribute("isCancelableReservation", isCancelableReservation);
+        model.addAttribute("hasPendingCancelRequest", hasPendingCancelRequest);
+        model.addAttribute("hasPendingChangeRequest", hasPendingChangeRequest);
+        model.addAttribute("hasPendingRequest", hasPendingRequest);
 
         return "admins/club/reservationDetail";
     }

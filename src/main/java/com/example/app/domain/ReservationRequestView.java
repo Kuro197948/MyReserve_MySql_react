@@ -1,6 +1,5 @@
 package com.example.app.domain;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ReservationRequestView {
@@ -12,6 +11,12 @@ public class ReservationRequestView {
 
     private String requestType;
     private String requestReason;
+
+    private LocalDateTime requestedReservationDate;
+    private Integer requestedPeopleCount;
+    private String requestedCourseName;
+    private String requestedRemarks;
+
     private String status;
     private String refundStatus;
 
@@ -20,7 +25,7 @@ public class ReservationRequestView {
     private LocalDateTime createdAt;
     private LocalDateTime processedAt;
 
-    private LocalDate reservationDate;
+    private LocalDateTime reservationDate;
     private Integer peopleCount;
     private String representativeName;
     private String phoneNumber;
@@ -70,6 +75,38 @@ public class ReservationRequestView {
         this.requestReason = requestReason;
     }
 
+    public LocalDateTime getRequestedReservationDate() {
+        return requestedReservationDate;
+    }
+
+    public void setRequestedReservationDate(LocalDateTime requestedReservationDate) {
+        this.requestedReservationDate = requestedReservationDate;
+    }
+
+    public Integer getRequestedPeopleCount() {
+        return requestedPeopleCount;
+    }
+
+    public void setRequestedPeopleCount(Integer requestedPeopleCount) {
+        this.requestedPeopleCount = requestedPeopleCount;
+    }
+
+    public String getRequestedCourseName() {
+        return requestedCourseName;
+    }
+
+    public void setRequestedCourseName(String requestedCourseName) {
+        this.requestedCourseName = requestedCourseName;
+    }
+
+    public String getRequestedRemarks() {
+        return requestedRemarks;
+    }
+
+    public void setRequestedRemarks(String requestedRemarks) {
+        this.requestedRemarks = requestedRemarks;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -110,11 +147,11 @@ public class ReservationRequestView {
         this.processedAt = processedAt;
     }
 
-    public LocalDate getReservationDate() {
+    public LocalDateTime getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservationDate(LocalDate reservationDate) {
+    public void setReservationDate(LocalDateTime reservationDate) {
         this.reservationDate = reservationDate;
     }
 
@@ -172,5 +209,33 @@ public class ReservationRequestView {
 
     public void setMemberEmail(String memberEmail) {
         this.memberEmail = memberEmail;
+    }
+
+    public String getRequestTypeLabel() {
+        if ("CANCEL".equals(requestType)) {
+            return "キャンセル申請";
+        }
+
+        if ("CHANGE".equals(requestType)) {
+            return "変更申請";
+        }
+
+        return requestType;
+    }
+
+    public String getStatusLabel() {
+        if ("PENDING".equals(status)) {
+            return "申請中";
+        }
+
+        if ("APPROVED".equals(status)) {
+            return "承認済み";
+        }
+
+        if ("REJECTED".equals(status)) {
+            return "却下";
+        }
+
+        return status;
     }
 }

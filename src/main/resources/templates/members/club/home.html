@@ -7,59 +7,8 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container">
 
-  <!-- Reactで描画する上部エリア -->
-  <div id="member-home-top-widget"></div>
-
-  <div class="mt-4">
-	<section class="member-home-news">
-	  <h2 class="member-home-news-title">新着情報</h2>
-
-	  <div th:if="${latestNews != null and !#lists.isEmpty(latestNews)}">
-	    <div class="card news-card mb-3" th:each="n : ${latestNews}">
-	      <div class="card-body">
-	        <div class="d-flex justify-content-between align-items-start">
-	          <h5 class="card-title news-title mb-1">
-	            <a th:href="@{/members/club/announcements/{id}(id=${n.id})}"
-	               th:text="${n.title}">
-	              タイトル
-	            </a>
-	          </h5>
-
-	          <small class="news-date"
-	                 th:text="${#temporals.format(n.postDate,'yyyy/MM/dd')}">
-	            2026/03/03
-	          </small>
-	        </div>
-
-	        <small class="news-author" th:text="${n.author}">
-	          投稿者
-	        </small>
-
-	        <p class="card-text news-body mt-2"
-	           th:text="${n.detail != null ? #strings.abbreviate(n.detail.article, 160) : '本文はありません'}">
-	          本文…
-	        </p>
-	      </div>
-	    </div>
-
-	    <div class="news-more-link-wrap">
-	      <a href="/members/club/announcements" class="news-more-link">
-	        もっと見る
-	      </a>
-	    </div>
-	  </div>
-
-	  <div class="alert alert-secondary news-empty"
-	       th:if="${latestNews == null or #lists.isEmpty(latestNews)}">
-	    新着情報はありません
-	  </div>
-	</section>
-
-  </div>
-
-</div>
+<div id="member-home-root"></div>
 
 <!-- Vite開発サーバーからReactを読み込む -->
 <script type="module">
@@ -71,6 +20,7 @@
 </script>
 
 <script type="module" src="http://localhost:5175/@vite/client"></script>
-<script type="module" src="http://localhost:5175/src/memberHomeTopMain.jsx"></script>
+<script type="module" src="http://localhost:5175/src/memberHomeMain.jsx"></script>
+
 </body>
 </html>

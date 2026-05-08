@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">変更申請</title>
+
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+  <section class="reservation-detail-page">
+
+    <div class="reservation-page-header">
+      <h1 class="reservation-page-title">変更申請</h1>
+      <p class="reservation-page-description">
+        現在の予約内容を確認し、変更したい内容を入力してください。
+      </p>
+    </div>
+
+    <div class="reservation-detail-card">
+
+      <div class="alert alert-danger"
+           th:if="${errorMessage != null}"
+           th:text="${errorMessage}">
+        エラーメッセージ
+      </div>
+
+      <div class="reservation-detail-header">
+        <h2 class="reservation-detail-title">
+          現在の予約内容
+        </h2>
+
+        <span class="reservation-status"
+              th:text="${reservation.statusLabel}">
+          予約中
+        </span>
+      </div>
+
+      <div class="reservation-detail-body">
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">現在の予約日</span>
+          <span class="reservation-detail-value"
+                th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd HH:mm')}">
+            2026/05/14 18:00
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">現在の人数</span>
+          <span class="reservation-detail-value">
+            <span th:text="${reservation.peopleCount}">2</span>名
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">現在のコース</span>
+          <span class="reservation-detail-value"
+                th:text="${reservation.courseName != null and !#strings.isEmpty(reservation.courseName) ? reservation.courseName : 'コース未設定'}">
+            コース未設定
+          </span>
+        </div>
+
+        <div class="reservation-detail-row">
+          <span class="reservation-detail-label">現在の備考</span>
+          <span class="reservation-detail-value"
+                th:text="${reservation.remarks != null and !#strings.isEmpty(reservation.remarks) ? reservation.remarks : 'なし'}">
+            なし
+          </span>
+        </div>
+
+      </div>
+
+      <hr class="my-4">
+
+      <form th:action="@{/members/club/reservations/{id}/change-request(id=${reservation.id})}"
+            method="post">
+
+        <div class="mb-3">
+          <label for="requestedReservationDate" class="form-label">
+            変更希望日時
+          </label>
+          <input type="datetime-local"
+                 id="requestedReservationDate"
+                 name="requestedReservationDate"
+                 class="form-control"
+                 required
+                 th:value="${requestedReservationDate != null ? requestedReservationDate : #temporals.format(reservation.reservationDate, 'yyyy-MM-dd''T''HH:mm')}">
+        </div>
+
+        <div class="mb-3">
+          <label for="requestedPeopleCount" class="form-label">
+            変更希望人数
+          </label>
+          <input type="number"
+                 id="requestedPeopleCount"
+                 name="requestedPeopleCount"
+                 class="form-control"
+                 min="1"
+                 required
+                 th:value="${requestedPeopleCount != null ? requestedPeopleCount : reservation.peopleCount}">
+        </div>
+
+        <div class="mb-3">
+          <label for="requestedCourseName" class="form-label">
+            変更希望コース
+          </label>
+          <input type="text"
+                 id="requestedCourseName"
+                 name="requestedCourseName"
+                 class="form-control"
+                 th:value="${requestedCourseName != null ? requestedCourseName : reservation.courseName}"
+                 placeholder="例：飲み放題コース">
+        </div>
+
+        <div class="mb-3">
+          <label for="requestedRemarks" class="form-label">
+            変更希望備考
+          </label>
+          <textarea id="requestedRemarks"
+                    name="requestedRemarks"
+                    class="form-control"
+                    rows="3"
+                    placeholder="変更後に伝えておきたい内容があれば入力してください。"
+                    th:text="${requestedRemarks != null ? requestedRemarks : reservation.remarks}">
+          </textarea>
+        </div>
+
+        <div class="mb-4">
+          <label for="requestReason" class="form-label">
+            変更理由
+          </label>
+          <textarea id="requestReason"
+                    name="requestReason"
+                    class="form-control"
+                    rows="4"
+                    required
+                    placeholder="例：来店人数が変更になったため、予約内容の変更を希望します。"
+                    th:text="${requestReason}">
+          </textarea>
+        </div>
+
+        <div class="reservation-detail-actions">
+          <a th:href="@{/members/club/reservations/{id}(id=${reservation.id})}"
+             class="btn btn-outline-secondary">
+            詳細へ戻る
+          </a>
+
+          <button type="submit"
+                  class="btn btn-outline-primary"
+                  onclick="return confirm('この内容で変更申請を送信しますか？');">
+            変更申請を送信
+          </button>
+        </div>
+
+      </form>
+
+      <p class="reservation-detail-note">
+        ※変更申請は管理者の確認後に反映されます。
+      </p>
+
+    </div>
+
+  </section>
+</div>
+
+</body>
+</html>

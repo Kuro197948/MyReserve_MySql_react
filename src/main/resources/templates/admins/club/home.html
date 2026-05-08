@@ -9,25 +9,30 @@
 
 <body>
   <div class="gb-container">
-    <h1 class="gb-title mb-3 text-center">ホーム</h1>
 
     <th:block th:if="${session.loginId}">
-      <div class="gb-panel">
-        <div class="d-flex justify-content-center gap-4 flex-wrap">
-          <a th:href="@{/admins/club/announcements}" class="btn btn-gb">お知らせ一覧</a>
-		  <a th:href="@{/admins/club/reservations}" class="btn btn-warning">
-		      予約一覧
-		  </a>
-		  <a th:href="@{/admins/club/reservations/history}" class="btn btn-outline-secondary">
-		    予約履歴
-		  </a>
-          <a th:href="@{/admins/club/memberslist}" class="btn btn-gb">会員一覧</a>
-          <a th:href="@{/logout}" class="btn btn-gb">ログアウト</a>
-        </div>
-      </div>
+		<div id="admin-home-root"
+		     th:attr="
+		       data-today-reservation-count=${todayReservationCount != null ? todayReservationCount : 0},
+		       data-pending-request-count=${pendingRequestCount != null ? pendingRequestCount : 0},
+		       data-monthly-reservation-count=${monthlyReservationCount != null ? monthlyReservationCount : 0},
+		       data-member-count=${memberCount != null ? memberCount : 0}
+		     ">
+		  React読み込み中...
+		</div>
     </th:block>
+
   </div>
 
-  <script></script>
+  <script type="module">
+    import RefreshRuntime from "http://localhost:5175/@react-refresh";
+    RefreshRuntime.injectIntoGlobalHook(window);
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (type) => type;
+    window.__vite_plugin_react_preamble_installed__ = true;
+  </script>
+
+  <script type="module" src="http://localhost:5175/@vite/client"></script>
+  <script type="module" src="http://localhost:5175/src/adminHomeMain.jsx"></script>
 </body>
 </html>

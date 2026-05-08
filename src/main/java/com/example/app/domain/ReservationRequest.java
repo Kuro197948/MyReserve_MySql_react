@@ -1,6 +1,5 @@
 package com.example.app.domain;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ReservationRequest {
@@ -13,7 +12,7 @@ public class ReservationRequest {
     private String requestType;
     private String requestReason;
 
-    private LocalDate requestedReservationDate;
+    private LocalDateTime requestedReservationDate;
     private Integer requestedPeopleCount;
     private String requestedCourseName;
     private String requestedRemarks;
@@ -66,11 +65,11 @@ public class ReservationRequest {
         this.requestReason = requestReason;
     }
 
-    public LocalDate getRequestedReservationDate() {
+    public LocalDateTime getRequestedReservationDate() {
         return requestedReservationDate;
     }
 
-    public void setRequestedReservationDate(LocalDate requestedReservationDate) {
+    public void setRequestedReservationDate(LocalDateTime requestedReservationDate) {
         this.requestedReservationDate = requestedReservationDate;
     }
 
