@@ -1,19 +1,17 @@
 package com.example.app.controller;
 
-import java.time.YearMonth;
-
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.app.domain.UpgradePaymentForm;
 import com.example.app.service.MemberUpgradeService;
+import com.example.app.service.StripeCheckoutService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberUpgradeController {
 
     private final MemberUpgradeService memberUpgradeService;
+    private final StripeCheckoutService stripeCheckoutService;
     private final HttpSession session;
 
     @GetMapping("/members/club/upgrade")
@@ -38,16 +37,11 @@ public class MemberUpgradeController {
         }
 
         model.addAttribute("title", "プレミアム会員アップグレード");
-        model.addAttribute("upgradePaymentForm", new UpgradePaymentForm());
         return "members/club/upgrade";
     }
 
-    @PostMapping("/members/club/upgrade/complete")
-    public String completeUpgrade(
-            @ModelAttribute("upgradePaymentForm") @Valid UpgradePaymentForm form,
-            Errors errors,
-            Model model) {
-
+    @PostMapping("/members/club/upgrade/checkout")
+    public String startStripeCheckout(Model model) {
         Integer memberId = (Integer) session.getAttribute("memberId");
         Integer memberTypeId = (Integer) session.getAttribute("memberTypeId");
 
@@ -59,66 +53,69 @@ public class MemberUpgradeController {
             return "redirect:/members/club/home";
         }
 
-        if (errors.hasErrors()) {
+        try {
+            Session checkoutSession = stripeCheckoutService.createPremiumCheckoutSession(memberId);
+            return "redirect:" + checkoutSession.getUrl();
+
+        } catch (StripeException e) {
+            e.printStackTrace();
+
             model.addAttribute("title", "プレミアム会員アップグレード");
+            model.addAttribute("errorMessage", "決済画面の作成に失敗しました。時間をおいて再度お試しください。");
+
             return "members/club/upgrade";
         }
+    }
 
-        // 基本チェック
-        if (!form.getCardNumber().matches("\\d{16}")) {
-            errors.rejectValue("cardNumber", "error.cardNumber", "カード番号は16桁の数字で入力してください");
+    @GetMapping("/members/club/upgrade/success")
+    public String completeStripeUpgrade(
+            @RequestParam("session_id") String sessionId,
+            Model model) {
+
+        Integer memberId = (Integer) session.getAttribute("memberId");
+
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
         }
 
-        if (!form.getExpiry().matches("(0[1-9]|1[0-2])/\\d{2}")) {
-            errors.rejectValue("expiry", "error.expiry", "有効期限は MM/YY 形式で入力してください");
-        } else {
-            String[] parts = form.getExpiry().split("/");
-            int month = Integer.parseInt(parts[0]);
-            int year = 2000 + Integer.parseInt(parts[1]);
+        try {
+            Session checkoutSession = stripeCheckoutService.retrieveSession(sessionId);
 
-            YearMonth inputExpiry = YearMonth.of(year, month);
-            YearMonth now = YearMonth.now();
+            String paymentStatus = checkoutSession.getPaymentStatus();
 
-            if (inputExpiry.isBefore(now)) {
-                errors.rejectValue("expiry", "error.expiry", "有効期限切れのカードは使用できません");
+            if (!"paid".equals(paymentStatus)) {
+                model.addAttribute("title", "プレミアム会員アップグレード");
+                model.addAttribute("errorMessage", "決済が完了していません。もう一度お試しください。");
+                return "members/club/upgrade";
             }
-        }
 
-        if (!form.getCvc().matches("\\d{3,4}")) {
-            errors.rejectValue("cvc", "error.cvc", "セキュリティコードは3〜4桁の数字で入力してください");
-        }
+            memberUpgradeService.upgradeToPremium(memberId);
+            session.setAttribute("memberTypeId", 2);
 
-        if (errors.hasErrors()) {
+            return "redirect:/members/club/upgrade/result";
+
+        } catch (StripeException e) {
+            e.printStackTrace();
+
             model.addAttribute("title", "プレミアム会員アップグレード");
+            model.addAttribute("errorMessage", "決済結果の確認に失敗しました。時間をおいて再度お試しください。");
+
             return "members/club/upgrade";
         }
+    }
 
-        // ダミー決済の成功 / 失敗分岐
-        String cardNumber = form.getCardNumber();
+    @GetMapping("/members/club/upgrade/cancel")
+    public String cancelStripeUpgrade(Model model) {
+        Integer memberId = (Integer) session.getAttribute("memberId");
 
-        if ("4000000000000002".equals(cardNumber)) {
-            errors.rejectValue("cardNumber", "error.cardNumber", "カードが拒否されました。別のカードをお試しください");
-            model.addAttribute("title", "プレミアム会員アップグレード");
-            return "members/club/upgrade";
+        if (memberId == null) {
+            return "redirect:/members/memberslogin";
         }
 
-        if ("4000000000000069".equals(cardNumber)) {
-            errors.rejectValue("expiry", "error.expiry", "このカードは有効期限切れとして扱われます");
-            model.addAttribute("title", "プレミアム会員アップグレード");
-            return "members/club/upgrade";
-        }
+        model.addAttribute("title", "プレミアム会員アップグレード");
+        model.addAttribute("errorMessage", "決済がキャンセルされました。必要に応じて再度お試しください。");
 
-        if (!"4242424242424242".equals(cardNumber)) {
-            errors.rejectValue("cardNumber", "error.cardNumber", "利用できないダミーカード番号です");
-            model.addAttribute("title", "プレミアム会員アップグレード");
-            return "members/club/upgrade";
-        }
-
-        // 成功時のみプレミアム化
-        memberUpgradeService.upgradeToPremium(memberId);
-        session.setAttribute("memberTypeId", 2);
-
-        return "redirect:/members/club/upgrade/result";
+        return "members/club/upgrade";
     }
 
     @GetMapping("/members/club/upgrade/result")

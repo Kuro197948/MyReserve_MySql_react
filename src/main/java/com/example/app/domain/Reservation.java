@@ -4,20 +4,43 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
 import lombok.Data;
 
 @Data
 public class Reservation {
 
     private Integer id;
+
+    @NotNull(message = "人数を入力してください")
+    @Min(value = 1, message = "人数は1人以上で入力してください")
+    @Max(value = 20, message = "人数は20人以下で入力してください")
     private Integer peopleCount;
+
+    @NotBlank(message = "代表者名を入力してください")
     private String representativeName;
+
+    @NotBlank(message = "電話番号を入力してください")
+    @Pattern(
+            regexp = "^(0\\d{9,10}|0\\d{1,4}-\\d{1,4}-\\d{4})$",
+            message = "電話番号は半角数字のみ、またはハイフン付きで入力してください"
+    )
     private String phoneNumber;
+
     private String courseName;
     private String remarks;
     private LocalDateTime createdAt;
     private Integer memberId;
     private String status;
+
+    @NotNull(message = "予約日時を入力してください")
+    @Future(message = "予約日時は現在より後の日時を入力してください")
     private LocalDateTime reservationDate;
 
     private boolean memberDeleted;

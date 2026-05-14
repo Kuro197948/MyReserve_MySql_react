@@ -8,21 +8,41 @@
 </head>
 <body>
 <div class="container">
+
 <h1 class="my-4">[[${title}]]</h1>
+
 <form th:action="@{/admins/club/members/add}" method="post" th:object="${member}">
- <span th:errors="*{name}" class="error"></span>
- <p class="mt-2">氏名：<input type="text" th:field="*{name}"></p>
- 
- 
- <p class="mt-2">会員種別：
- <select th:field="*{type.id}">
- <option th:each="t : ${types}" th:value="${t.id}"
-th:text="${t.name}"></option>
- </select>
- </p>
- <input class="btn btn-primary" type="submit">
+
+  <span th:errors="*{name}" class="error"></span>
+  <p class="mt-2">
+    氏名：
+    <input type="text" th:field="*{name}">
+  </p>
+
+  <span th:errors="*{email}" class="error"></span>
+  <p class="mt-2">
+    メールアドレス：
+    <input type="email" th:field="*{email}">
+  </p>
+
+  <p class="mt-2">
+    会員種別：
+    <select th:field="*{type.id}">
+      <option th:each="t : ${types}"
+              th:value="${t.id}"
+              th:text="${t.name}">
+      </option>
+    </select>
+  </p>
+
+  <input class="btn btn-primary" type="submit" value="送信">
+
 </form>
-<p class="mt-4"><a th:href="@{/admins/club/memberslist}">一覧に戻る</a></p>
+
+<p class="mt-4">
+  <a th:href="@{/admins/club/memberslist}">一覧に戻る</a>
+</p>
+
 </div>
 </body>
 </html>

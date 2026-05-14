@@ -1,5 +1,6 @@
 package com.example.app.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -21,81 +22,111 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
-	
-	//1ページあたりの表示人数
-	private final int NUM_PER_PAGE = 5;
-	
-	private final MemberService service;
-	
-	@GetMapping("/memberslist")
-	public String list(
-			@RequestParam(name = "page", defaultValue = "1") Integer page,
-			Model model) {
-			model.addAttribute("members",
-					service.getMemberListByPage(page,  NUM_PER_PAGE));
-			model.addAttribute("page", page);
-			model.addAttribute("totalPages",
-					service.getTotalPages(NUM_PER_PAGE));
 
-		return "admins/club/memberslist";
-	}
-	
-	@GetMapping("/members/add")
-	public String addGet(Model model) {
-		model.addAttribute("title", "会員の追加");
-		model.addAttribute("member", new Member());
-		model.addAttribute("types", service.getTypeList());
-		return "admins/club/membersave";
-	}
-		
-	@PostMapping("/members/add")
-	public String addPost(
-			@Valid Member member,
-			Errors errors,
-			RedirectAttributes rd,
-			Model model) {
-		if(errors.hasErrors()) {
-			model.addAttribute("title", "会員の追加");
-			model.addAttribute("types",service.getTypeList());
-			return "admins/club/memberslist";
-		}
-		
-		service.addMember(member);
-		rd.addFlashAttribute("statusMessage", "会員を追加しました。");
-		return "redirect:/admins/club/memberslist";
-	}
-	@GetMapping("/edit/{id}")
-	public String editGet(@PathVariable Integer id, Model model) {
-		model.addAttribute("title", "会員情報の変更");
-		model.addAttribute("member", service.getMemberById(id));
-		model.addAttribute("types", service.getTypeList());
-		return "admins/club/membersave";
-		
-	}
-	@PostMapping("/edit/{id}")
-	 public String editPost(
-	 @PathVariable Integer id,
-	 @Valid Member member,
-	 Errors errors,
-	 RedirectAttributes rd,
-	 Model model) {
-	 if(errors.hasErrors()) {
-	 model.addAttribute("title", "会員情報の変更");
-	 model.addAttribute("types", service.getTypeList());
-	 return "admins/club/membersave";
-	 }
-	 member.setId(id); //更新に必要な会員 ID をセット
-	 service.editMember(member);
-	 rd.addFlashAttribute("statusMessage", "会員情報を更新しました。");
-	 return "redirect:/admins/club/memberslist";
-	 }
+    private static final String REACT_ADMIN_BASE_URL = "http://localhost:5175/admin";
 
-		
-	@GetMapping("/delete/{id}")
-	public String delete(@PathVariable Integer id,
-				RedirectAttributes rd) {
-		service.deleteMember(id);
-		rd.addFlashAttribute("statusMessage","会員情報を削除しました。");
-		return "redirect:/admins/club/memberslist";
-	}
+    // 1ページあたりの表示人数
+    private final int NUM_PER_PAGE = 5;
+
+    private final MemberService service;
+
+    @GetMapping("/memberslist")
+    public String list(
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            HttpSession session,
+            Model model) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members";
+    }
+
+    @GetMapping("/members/add")
+    public String addGet(HttpSession session) {
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members/new";
+    }
+
+    @PostMapping("/members/add")
+    public String addPost(
+            HttpSession session,
+            @Valid Member member,
+            Errors errors,
+            RedirectAttributes rd,
+            Model model) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "会員の追加");
+            model.addAttribute("types", service.getTypeList());
+            return "admins/club/membersave";
+        }
+
+        service.addMember(member);
+        rd.addFlashAttribute("statusMessage", "会員を追加しました。");
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editGet(
+            @PathVariable Integer id,
+            HttpSession session) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members/" + id + "/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editPost(
+            @PathVariable Integer id,
+            HttpSession session,
+            @Valid Member member,
+            Errors errors,
+            RedirectAttributes rd,
+            Model model) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "会員情報の変更");
+            model.addAttribute("types", service.getTypeList());
+            return "admins/club/membersave";
+        }
+
+        member.setId(id);
+        service.editMember(member);
+        rd.addFlashAttribute("statusMessage", "会員情報を更新しました。");
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(
+            @PathVariable Integer id,
+            HttpSession session,
+            RedirectAttributes rd) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        service.deleteMember(id);
+        rd.addFlashAttribute("statusMessage", "会員情報を削除しました。");
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/members";
+    }
 }

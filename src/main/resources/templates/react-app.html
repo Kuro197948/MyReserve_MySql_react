@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>MyReserve</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import RefreshRuntime from "http://localhost:5175/@react-refresh";
+    RefreshRuntime.injectIntoGlobalHook(window);
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (type) => type;
+    window.__vite_plugin_react_preamble_installed__ = true;
+  </script>
+
+  <script type="module" src="http://localhost:5175/@vite/client"></script>
+  <script type="module" src="http://localhost:5175/src/main.jsx"></script>
+</body>
+</html>

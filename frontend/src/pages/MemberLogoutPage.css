@@ -1,0 +1,57 @@
+.member-logout-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.member-logout-card {
+  width: 360px;
+  padding: 40px 32px;
+  border-radius: 20px;
+  background-color: #fff;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  animation: memberFadeUp 0.6s ease-out;
+}
+
+.member-logout-card h1 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 24px;
+  color: #333;
+}
+
+.member-logout-card p {
+  margin: 0;
+  color: #666;
+}
+
+.member-logout-spinner {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border: 6px solid #dee2e6;
+  border-top-color: #343a40;
+  border-radius: 50%;
+  animation: memberSpin 1s linear infinite;
+}
+
+@keyframes memberSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes memberFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

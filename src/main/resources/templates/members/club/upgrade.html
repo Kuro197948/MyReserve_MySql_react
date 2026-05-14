@@ -13,73 +13,46 @@
 
   <div class="card mx-auto" style="max-width: 700px;">
     <div class="card-body">
-      <h4 class="card-title mb-3">お支払い情報入力</h4>
+
+      <h4 class="card-title mb-3">プレミアム会員プラン</h4>
 
       <div class="alert alert-info">
         月額 500円 / プレミアム会員
       </div>
-	  
-	  <div class="alert alert-secondary">
-	    <p class="mb-1"><strong>ダミーカード番号</strong></p>
-	    <p class="mb-1">4242424242424242：成功</p>
-	    <p class="mb-1">4000000000000002：支払い失敗</p>
-	    <p class="mb-0">4000000000000069：有効期限切れ扱い</p>
-	  </div>
 
-      <p class="mb-4">
-        この画面はポートフォリオ用のダミー決済画面です。<br>
-        実際の課金は行われません。
-      </p>
+      <div class="alert alert-secondary">
+        <p class="mb-1"><strong>Stripeテスト決済について</strong></p>
+        <p class="mb-1">
+          この画面ではStripeのテスト環境を使用します。
+        </p>
+        <p class="mb-1">
+          実際の課金は行われません。
+        </p>
+        <p class="mb-0">
+          決済画面ではStripe公式のテストカードを使用してください。
+        </p>
+      </div>
 
-      <form th:action="@{/members/club/upgrade/complete}"
-            th:object="${upgradePaymentForm}"
-            method="post">
+      <div class="mb-4">
+        <h5>プレミアム会員でできること</h5>
+        <ul class="mb-0">
+          <li>プレミアム会員向けの表示を利用できます。</li>
+          <li>通常会員とは異なる会員ステータスで表示されます。</li>
+          <li>今後追加予定のプレミアム機能を利用できます。</li>
+        </ul>
+      </div>
 
-        <div class="mb-3">
-          <label class="form-label">支払い方法</label>
+      <div class="alert alert-warning">
+        <strong>テスト用カード例</strong><br>
+        カード番号：4242 4242 4242 4242<br>
+        有効期限：将来の日付<br>
+        セキュリティコード：任意の3桁
+      </div>
 
-          <div class="form-check">
-            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="card" id="card">
-            <label class="form-check-label" for="card">クレジットカード</label>
-          </div>
-
-          <div class="form-check">
-            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="applepay" id="applepay">
-            <label class="form-check-label" for="applepay">Apple Pay（ダミー）</label>
-          </div>
-
-          <div class="text-danger small" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}"></div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">カード名義</label>
-          <input type="text" class="form-control" th:field="*{cardName}" placeholder="TARO YAMADA">
-          <div class="text-danger small" th:if="${#fields.hasErrors('cardName')}" th:errors="*{cardName}"></div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">カード番号</label>
-          <input type="text" class="form-control" th:field="*{cardNumber}" placeholder="4242424242424242">
-          <div class="text-danger small" th:if="${#fields.hasErrors('cardNumber')}" th:errors="*{cardNumber}"></div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">有効期限</label>
-            <input type="text" class="form-control" th:field="*{expiry}" placeholder="MM/YY">
-            <div class="text-danger small" th:if="${#fields.hasErrors('expiry')}" th:errors="*{expiry}"></div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="form-label">セキュリティコード</label>
-            <input type="text" class="form-control" th:field="*{cvc}" placeholder="123">
-            <div class="text-danger small" th:if="${#fields.hasErrors('cvc')}" th:errors="*{cvc}"></div>
-          </div>
-        </div>
-
+      <form th:action="@{/members/club/upgrade/checkout}" method="post">
         <div class="d-flex gap-3 justify-content-center mt-4">
           <button type="submit" class="btn btn-warning">
-            支払いを確定してアップグレード
+            Stripeテスト決済へ進む
           </button>
 
           <a th:href="@{/members/club/home}" class="btn btn-secondary">
@@ -87,6 +60,7 @@
           </a>
         </div>
       </form>
+
     </div>
   </div>
 

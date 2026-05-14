@@ -11,36 +11,94 @@
 
     <h1 class="mb-4 text-center">予約フォーム</h1>
 
-    <form th:action="@{/members/club/reservation/create}" th:object="${reservation}" method="post">
-        
+    <form th:action="@{/members/club/reservation/create}"
+          th:object="${reservation}"
+          method="post"
+          novalidate>
+
         <div class="mb-3">
             <label for="reservationDate" class="form-label">予約日時</label>
-            <input type="datetime-local" th:field="*{reservationDate}" class="form-control" id="reservationDate">
+
+            <input type="datetime-local"
+                   th:field="*{reservationDate}"
+                   class="form-control"
+                   th:errorclass="is-invalid"
+                   id="reservationDate">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('reservationDate')}"
+                 th:errors="*{reservationDate}">
+                予約日時を入力してください
+            </div>
         </div>
 
         <div class="mb-3">
             <label for="peopleCount" class="form-label">人数</label>
-            <input type="number" th:field="*{peopleCount}" class="form-control" id="peopleCount" min="1">
+
+            <input type="number"
+                   th:field="*{peopleCount}"
+                   class="form-control"
+                   th:errorclass="is-invalid"
+                   id="peopleCount"
+                   min="1"
+                   max="20">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('peopleCount')}"
+                 th:errors="*{peopleCount}">
+                人数を入力してください
+            </div>
         </div>
 
         <div class="mb-3">
             <label for="representativeName" class="form-label">代表者名</label>
-            <input type="text" th:field="*{representativeName}" class="form-control" id="representativeName">
+
+            <input type="text"
+                   th:field="*{representativeName}"
+                   class="form-control"
+                   th:errorclass="is-invalid"
+                   id="representativeName">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('representativeName')}"
+                 th:errors="*{representativeName}">
+                代表者名を入力してください
+            </div>
         </div>
 
         <div class="mb-3">
             <label for="phoneNumber" class="form-label">電話番号</label>
-            <input type="text" th:field="*{phoneNumber}" class="form-control" id="phoneNumber">
+
+            <input type="text"
+                   th:field="*{phoneNumber}"
+                   class="form-control"
+                   th:errorclass="is-invalid"
+                   id="phoneNumber"
+                   placeholder="090-1234-5678">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('phoneNumber')}"
+                 th:errors="*{phoneNumber}">
+                電話番号を入力してください
+            </div>
         </div>
 
         <div class="mb-3">
             <label for="courseName" class="form-label">コース名</label>
-            <input type="text" th:field="*{courseName}" class="form-control" id="courseName">
+
+            <input type="text"
+                   th:field="*{courseName}"
+                   class="form-control"
+                   id="courseName">
         </div>
 
         <div class="mb-3">
             <label for="remarks" class="form-label">備考</label>
-            <textarea th:field="*{remarks}" class="form-control" id="remarks" rows="4"></textarea>
+
+            <textarea th:field="*{remarks}"
+                      class="form-control"
+                      id="remarks"
+                      rows="4"></textarea>
         </div>
 
         <div class="d-flex justify-content-center gap-3">

@@ -73,7 +73,13 @@ public class AdminLoginController {
         return "redirect:/admins/adminslogin";
     }
 
-    // ログアウト処理
+    // Reactの管理者ログアウト画面表示
+    @GetMapping("/admin/logout")
+    public String showAdminLogoutPage() {
+        return "react-app";
+    }
+
+    // 旧ログアウト処理
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();

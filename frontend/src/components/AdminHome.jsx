@@ -1,13 +1,49 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import client from "../api/client";
 import "./AdminHome.css";
 
-const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
+const AdminHome = () => {
+  const navigate = useNavigate();
+
+  const [summaryCounts, setSummaryCounts] = useState({
+    todayReservationCount: 0,
+    pendingRequestCount: 0,
+    monthlyReservationCount: 0,
+    memberCount: 0,
+  });
+
+  const [loadingSummary, setLoadingSummary] = useState(true);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await client.get("/admin/home/summary");
+
+        setSummaryCounts({
+          todayReservationCount: response.data.todayReservationCount ?? 0,
+          pendingRequestCount: response.data.pendingRequestCount ?? 0,
+          monthlyReservationCount: response.data.monthlyReservationCount ?? 0,
+          memberCount: response.data.memberCount ?? 0,
+        });
+      } catch (error) {
+        if (error.response?.status === 401) {
+          navigate("/admins/adminslogin");
+          return;
+        }
+
+        console.error("管理者ホーム集計取得エラー:", error);
+      } finally {
+        setLoadingSummary(false);
+      }
+    };
+
+    fetchSummary();
+  }, [navigate]);
+
   const todayReservationCount = Number(summaryCounts.todayReservationCount ?? 0);
-  const requestCount = Number(
-    summaryCounts.pendingRequestCount ?? pendingRequestCount ?? 0
-  );
-  const monthlyReservationCount = Number(
-    summaryCounts.monthlyReservationCount ?? 0
-  );
+  const requestCount = Number(summaryCounts.pendingRequestCount ?? 0);
+  const monthlyReservationCount = Number(summaryCounts.monthlyReservationCount ?? 0);
   const memberCount = Number(summaryCounts.memberCount ?? 0);
 
   const hasPendingRequest = requestCount > 0;
@@ -31,7 +67,7 @@ const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
       title: "今月の予約",
       value: monthlyReservationCount,
       unit: "件",
-      description:  "今月の来店予定です。",
+      description: "今月の来店予定です。",
       type: "month",
     },
     {
@@ -47,14 +83,14 @@ const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
     {
       title: "現在予約",
       description: "予約済み・来店予定の予約を確認します。",
-      href: "/admins/club/reservations",
+      to: "/admin/reservations",
       buttonText: "現在予約を確認する",
       type: "reservation",
     },
     {
       title: "予約申請",
       description: "キャンセル申請・変更申請を確認し、承認または却下します。",
-      href: "/admins/club/reservation-requests",
+      to: "/admin/reservation-requests",
       buttonText: "申請を確認する",
       type: "request",
       badge: hasPendingRequest ? requestCount : null,
@@ -63,32 +99,56 @@ const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
     {
       title: "予約履歴",
       description: "キャンセル済・完了済の過去予約を確認します。",
-      href: "/admins/club/reservations/history",
+      to: "/admin/reservations/history",
       buttonText: "履歴を確認する",
       type: "history",
     },
     {
       title: "お知らせ管理",
       description: "会員向けのお知らせ一覧を確認・管理します。",
-      href: "/admins/club/announcements",
+      to: "/admin/announcements",
       buttonText: "お知らせを管理する",
       type: "news",
     },
     {
       title: "会員一覧",
       description: "登録されている会員情報を確認します。",
-      href: "/admins/club/memberslist",
+      to: "/admin/members",
       buttonText: "会員を確認する",
       type: "member",
     },
     {
       title: "ログアウト",
       description: "管理者画面での作業を終了し、ログイン画面へ戻ります。",
-      href: "/logout",
+      to: "/admin/logout",
       buttonText: "ログアウトする",
       type: "logout",
     },
   ];
+
+  const renderMenuCard = (item) => (
+    <>
+      <div className="admin-menu-card-header">
+        <div>
+          <p className="admin-menu-subtitle">管理メニュー</p>
+          <h2 className="admin-menu-title">{item.title}</h2>
+        </div>
+
+        {item.badge && (
+          <div className="admin-menu-badge-area">
+            <span className="admin-menu-badge">{item.badge}</span>
+            <span className="admin-menu-badge-text">
+              {item.badgeText}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <p className="admin-menu-description">{item.description}</p>
+
+      <span className="admin-menu-button">{item.buttonText}</span>
+    </>
+  );
 
   return (
     <div className="admin-home">
@@ -110,7 +170,9 @@ const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
             <p className="admin-summary-title">{item.title}</p>
 
             <div className="admin-summary-value-area">
-              <span className="admin-summary-value">{item.value}</span>
+              <span className="admin-summary-value">
+                {loadingSummary ? "-" : item.value}
+              </span>
               <span className="admin-summary-unit">{item.unit}</span>
             </div>
 
@@ -128,31 +190,13 @@ const AdminHome = ({ summaryCounts = {}, pendingRequestCount = 0 }) => {
 
       <div className="admin-menu-grid">
         {menuItems.map((item) => (
-          <a
+          <Link
             key={item.title}
-            href={item.href}
+            to={item.to}
             className={`admin-menu-card admin-menu-card-${item.type}`}
           >
-            <div className="admin-menu-card-header">
-              <div>
-                <p className="admin-menu-subtitle">管理メニュー</p>
-                <h2 className="admin-menu-title">{item.title}</h2>
-              </div>
-
-              {item.badge && (
-                <div className="admin-menu-badge-area">
-                  <span className="admin-menu-badge">{item.badge}</span>
-                  <span className="admin-menu-badge-text">
-                    {item.badgeText}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <p className="admin-menu-description">{item.description}</p>
-
-            <span className="admin-menu-button">{item.buttonText}</span>
-          </a>
+            {renderMenuCard(item)}
+          </Link>
         ))}
       </div>
     </div>

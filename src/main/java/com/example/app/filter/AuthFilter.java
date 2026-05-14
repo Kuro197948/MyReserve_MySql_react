@@ -13,15 +13,22 @@ import jakarta.servlet.http.HttpSession;
 
 public class AuthFilter implements Filter {
 
-  @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	    throws IOException, ServletException {
 
-    HttpServletRequest req = (HttpServletRequest) request;
-    HttpServletResponse res = (HttpServletResponse) response;
+	  HttpServletRequest req = (HttpServletRequest) request;
+	  HttpServletResponse res = (HttpServletResponse) response;
 
-    String uri = req.getRequestURI();
-    String ctx = req.getContextPath();
+	  if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+	    chain.doFilter(request, response);
+	    return;
+	  }
+
+	  String uri = req.getRequestURI();
+	  String ctx = req.getContextPath();
+
+	  // 以下は今の処理のまま
 
     // 戻る対策（キャッシュ無効）
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");

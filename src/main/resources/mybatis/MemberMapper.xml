@@ -61,9 +61,10 @@
     </select>
 
     <insert id="insert"
-        parameterType="com.example.app.domain.Member"
-        useGeneratedKeys="true"
-        keyProperty="id">
+            parameterType="com.example.app.domain.Member"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
         INSERT INTO members (
             name,
             email,
@@ -75,7 +76,7 @@
             #{email},
             #{loginPass},
             #{type.id},
-            #{created}
+            NOW()
         )
     </insert>
 
@@ -118,10 +119,10 @@
         DELETE FROM members
         WHERE id = #{id}
     </delete>
-    
+
     <select id="countAllMembers" resultType="int">
-    SELECT COUNT(*)
-    FROM members
-</select>
+        SELECT COUNT(*)
+        FROM members
+    </select>
 
 </mapper>

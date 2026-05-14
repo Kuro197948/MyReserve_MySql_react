@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.example.app.mapper.NewsDetailMapper">
 
   <insert id="insert" parameterType="com.example.app.domain.NewsDetail">
     INSERT INTO news_details (news_id, article, photo)
     VALUES (#{newsId}, #{article}, #{photo})
   </insert>
+
+  <update id="update" parameterType="com.example.app.domain.NewsDetail">
+    UPDATE news_details
+    <set>
+      article = #{article}
+      <if test="photo != null and photo != ''">
+        , photo = #{photo}
+      </if>
+    </set>
+    WHERE news_id = #{newsId}
+  </update>
 
   <delete id="deleteByNewsId" parameterType="int">
     DELETE FROM news_details

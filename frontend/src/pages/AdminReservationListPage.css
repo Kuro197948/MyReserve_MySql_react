@@ -1,0 +1,570 @@
+.admin-reservation-list-page,
+.admin-reservation-list-page * {
+  box-sizing: border-box;
+}
+
+.admin-reservation-list-page {
+  min-height: 100vh;
+  padding: 40px 16px;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 32%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.admin-reservation-list-card {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+.admin-reservation-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.admin-reservation-label {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.admin-reservation-title {
+  margin: 0 0 10px;
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.admin-reservation-description {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #64748b;
+  line-height: 1.7;
+  font-weight: 600;
+}
+
+.admin-reservation-alert {
+  margin: 18px 0;
+  padding: 14px 16px;
+  font-weight: 700;
+  border-radius: 14px;
+}
+
+.admin-reservation-alert.success {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+}
+
+.admin-reservation-alert.error {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.admin-reservation-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.admin-reservation-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-reservation-section-title {
+  margin: 0 0 6px;
+  color: #020617;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.admin-reservation-section-description {
+  margin: 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.admin-reservation-history-top-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  min-width: 140px;
+  padding: 9px 18px;
+  color: #0d6efd;
+  background: #ffffff;
+  border: 1.5px solid #0d6efd;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.admin-reservation-history-top-button:hover {
+  color: #0d6efd;
+  transform: translateY(-2px);
+  opacity: 0.94;
+}
+
+.admin-reservation-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-reservation-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-reservation-table th,
+.admin-reservation-table td {
+  padding: 16px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #020617;
+  font-size: 0.88rem;
+  font-weight: 800;
+  vertical-align: middle;
+  background: #ffffff;
+}
+
+.admin-reservation-table th {
+  background: #f1f5f9;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.admin-reservation-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* 列幅 */
+.admin-reservation-table th:nth-child(1),
+.admin-reservation-table td:nth-child(1) {
+  width: 48px;
+}
+
+.admin-reservation-table th:nth-child(2),
+.admin-reservation-table td:nth-child(2) {
+  width: 145px;
+}
+
+.admin-reservation-table th:nth-child(3),
+.admin-reservation-table td:nth-child(3) {
+  width: 58px;
+}
+
+.admin-reservation-table th:nth-child(4),
+.admin-reservation-table td:nth-child(4) {
+  width: 86px;
+}
+
+.admin-reservation-table th:nth-child(5),
+.admin-reservation-table td:nth-child(5) {
+  width: 116px;
+}
+
+.admin-reservation-table th:nth-child(6),
+.admin-reservation-table td:nth-child(6) {
+  width: 112px;
+}
+
+.admin-reservation-table th:nth-child(7),
+.admin-reservation-table td:nth-child(7) {
+  width: 150px;
+}
+
+.admin-reservation-table th:nth-child(8),
+.admin-reservation-table td:nth-child(8) {
+  width: 140px;
+}
+
+.admin-reservation-id {
+  color: #020617;
+  font-weight: 900;
+}
+
+.admin-reservation-status-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.admin-reservation-status-badge,
+.admin-reservation-request-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  min-width: 100px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.admin-reservation-status-badge.reserved {
+  color: #92400e;
+  background: #fef3c7;
+  border: none;
+}
+
+.admin-reservation-status-badge.default {
+  color: #334155;
+  background: #e2e8f0;
+  border: none;
+}
+
+.admin-reservation-request-badge.cancel {
+  color: #be123c;
+  background: #ffe4e6;
+  border: none;
+}
+
+.admin-reservation-request-badge.change {
+  color: #1d4ed8;
+  background: #dbeafe;
+  border: none;
+}
+
+.admin-reservation-action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.admin-reservation-small-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+}
+
+.admin-reservation-small-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+.admin-reservation-small-button.detail {
+  color: #ffffff;
+  background: #0d6efd;
+  border: 1.5px solid #0d6efd;
+}
+
+.admin-reservation-small-button.detail:hover {
+  color: #ffffff;
+}
+
+.admin-reservation-small-button.cancel {
+  color: #ef4444;
+  background: #ffffff;
+  border: 1.5px solid #ef4444;
+}
+
+.admin-reservation-small-button.cancel:hover {
+  color: #ef4444;
+  background: #fff5f5;
+}
+
+.admin-reservation-small-button.request-cancel {
+  color: #ef4444;
+  background: #ffffff;
+  border: 1.5px solid #ef4444;
+}
+
+.admin-reservation-small-button.request-cancel:hover {
+  color: #ef4444;
+  background: #fff5f5;
+}
+
+.admin-reservation-small-button.request-change {
+  color: #2563eb;
+  background: #ffffff;
+  border: 1.5px solid #2563eb;
+}
+
+.admin-reservation-small-button.request-change:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.admin-reservation-bottom-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.admin-reservation-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 150px;
+  padding: 10px 22px;
+  font-weight: 900;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-reservation-button.secondary {
+  color: #0d6efd;
+  background: #ffffff;
+  border: 1.5px solid #0d6efd;
+}
+
+.admin-reservation-button.gray {
+  color: #ffffff;
+  background: #6b7280;
+  border: 1.5px solid #6b7280;
+}
+
+.admin-reservation-button:hover {
+  transform: translateY(-2px);
+  opacity: 0.94;
+}
+
+.admin-reservation-empty {
+  padding: 28px;
+  color: #475569;
+  font-weight: 800;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+}
+
+.admin-reservation-loading {
+  margin: 0;
+  color: #475569;
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 1000px) {
+  .admin-reservation-table {
+    min-width: 980px;
+    table-layout: auto;
+  }
+
+  .admin-reservation-table th:nth-child(8),
+  .admin-reservation-table td:nth-child(8) {
+    width: 140px;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-reservation-list-page {
+    padding: 28px 12px;
+  }
+
+  .admin-reservation-list-card {
+    padding: 20px;
+  }
+
+  .admin-reservation-title {
+    font-size: 1.6rem;
+  }
+
+  .admin-reservation-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-reservation-history-top-button {
+    width: 100%;
+  }
+
+  .admin-reservation-bottom-actions {
+    flex-direction: column;
+  }
+
+  .admin-reservation-button {
+    width: 100%;
+  }
+}
+
+/* ================================
+   操作列 専用クラス
+   既存CSSとの競合回避
+================================ */
+
+.admin-reservation-operation-cell {
+  width: 132px !important;
+  min-width: 132px !important;
+  max-width: 132px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.admin-reservation-operation-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.admin-reservation-operation-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  padding: 8px 8px !important;
+
+  border-radius: 999px !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+
+  cursor: pointer !important;
+  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease !important;
+}
+
+.admin-reservation-operation-button:hover {
+  transform: translateY(-1px) !important;
+  opacity: 0.94 !important;
+}
+
+.admin-reservation-operation-button.detail {
+  color: #ffffff !important;
+  background: #0d6efd !important;
+  border: 1.5px solid #0d6efd !important;
+}
+
+.admin-reservation-operation-button.detail:hover {
+  color: #ffffff !important;
+}
+
+.admin-reservation-operation-button.cancel,
+.admin-reservation-operation-button.request-cancel {
+  color: #ef4444 !important;
+  background: #ffffff !important;
+  border: 1.5px solid #ef4444 !important;
+}
+
+.admin-reservation-operation-button.cancel:hover,
+.admin-reservation-operation-button.request-cancel:hover {
+  color: #ef4444 !important;
+  background: #fff5f5 !important;
+}
+
+.admin-reservation-operation-button.request-change {
+  color: #2563eb !important;
+  background: #ffffff !important;
+  border: 1.5px solid #2563eb !important;
+}
+
+.admin-reservation-operation-button.request-change:hover {
+  color: #2563eb !important;
+  background: #eff6ff !important;
+}
+
+/* ================================
+   管理側 現在予約一覧 操作列調整
+================================ */
+
+.admin-reservation-page table th:last-child,
+.admin-reservation-page table td:last-child {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+}
+
+/* 操作列のボタンを縦並びにする */
+.admin-reservation-page table td:last-child {
+  vertical-align: middle;
+}
+
+.admin-reservation-page table td:last-child .admin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 126px;
+  min-width: 126px;
+  min-height: 38px;
+
+  margin: 0 0 8px 0;
+  padding: 8px 10px;
+
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 最後のボタンだけ余白を消す */
+.admin-reservation-page table td:last-child .admin-btn:last-child {
+  margin-bottom: 0;
+}
+
+/* 横並び用の余白が残っていた場合に消す */
+.admin-reservation-page table td:last-child .admin-btn + .admin-btn {
+  margin-left: 0;
+}
+
+/* 詳細ボタン */
+.admin-reservation-page table td:last-child .admin-btn-primary,
+.admin-reservation-page table td:last-child .admin-btn-blue {
+  color: #ffffff;
+  background: #0d6efd;
+  border: 1.5px solid #0d6efd;
+}
+
+/* キャンセル済みボタン */
+.admin-reservation-page table td:last-child .admin-btn-danger-outline {
+  color: #dc3545;
+  background: #ffffff;
+  border: 1.5px solid #dc3545;
+}
+
+/* 申請対応へボタン */
+.admin-reservation-page table td:last-child .admin-btn-outline,
+.admin-reservation-page table td:last-child .admin-btn-primary-outline {
+  color: #0d6efd;
+  background: #ffffff;
+  border: 1.5px solid #0d6efd;
+}

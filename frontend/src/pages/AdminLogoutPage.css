@@ -1,0 +1,57 @@
+.admin-logout-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.admin-logout-card {
+  width: 360px;
+  padding: 40px 32px;
+  border-radius: 20px;
+  background-color: #fff;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  animation: fadeUp 0.6s ease-out;
+}
+
+.admin-logout-card h1 {
+  font-size: 24px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.admin-logout-card p {
+  color: #666;
+  margin: 0;
+}
+
+.admin-logout-spinner {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border: 6px solid #dee2e6;
+  border-top-color: #343a40;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,6 +1,5 @@
 package com.example.app.controller;
 
-
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -22,80 +21,94 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/admins/club")
-
 @RequiredArgsConstructor
 public class NewsController {
 
-	
- private final NewsService newsService;
- private final MemberService memberService;
+    private static final String REACT_ADMIN_BASE_URL = "http://localhost:5175/admin";
 
- @GetMapping("/announcements")
- public String list(Model model) {
-	 var newsList = newsService.getNewsList();
+    private final NewsService newsService;
+    private final MemberService memberService;
 
+    @GetMapping("/announcements")
+    public String list(HttpSession session) {
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
 
-	    model.addAttribute("newsList", newsList);
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/announcements";
+    }
 
-	    return "admins/club/announcements";
-	}
- @GetMapping("/detail/{id}")
- public String detail(@PathVariable Integer id, Model model) {
- model.addAttribute("news", newsService.getNewsById(id));
- return "admins/club/detail";
- }
- @GetMapping("/save")
- public String addGet(Model model) {
- model.addAttribute("memberTypeList", memberService.getTypeList());
- model.addAttribute("newsForm", new NewsForm());
- return "admins/club/save";
- }
- @PostMapping("/save")
- public String addPost(
- HttpSession session,
- @Valid NewsForm newsForm,
- Errors errors,
- RedirectAttributes ra,
- Model model) {
- // バリデーション
-	 MultipartFile upfile = newsForm.getUpfile();
-	 if(!upfile.isEmpty()) {
-	 // 画像か否か判定する
-	 String type = upfile.getContentType();
-	 if(!type.startsWith("image/")) {
-	 // 画像ではない場合、エラーメッセージを表示
-	 errors.rejectValue("upfile", "error.not_image_file");
-	 }
-	 }
-	 
-	 
- if(errors.hasErrors()) {
- model.addAttribute("memberTypeList",
-memberService.getTypeList());
- return "admins/club/save";
- }
- // 投稿者名は管理者のログイン ID とする
- newsForm.setAuthor((String) session.getAttribute("loginId"));
+    @GetMapping("/detail/{id}")
+    public String detail(
+            @PathVariable Integer id,
+            HttpSession session) {
 
-//データベースへ追加
-newsService.addNews(newsForm);
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
 
-ra.addFlashAttribute("statusMessage", "お知らせを追加しました。");
-return "redirect:/admins/club/announcements";
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/announcements/" + id;
+    }
+
+    @GetMapping("/save")
+    public String addGet(HttpSession session) {
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/announcements/new";
+    }
+
+    @PostMapping("/save")
+    public String addPost(
+            HttpSession session,
+            @Valid NewsForm newsForm,
+            Errors errors,
+            RedirectAttributes ra,
+            Model model) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        MultipartFile upfile = newsForm.getUpfile();
+
+        if (upfile != null && !upfile.isEmpty()) {
+            String type = upfile.getContentType();
+
+            if (type == null || !type.startsWith("image/")) {
+                errors.rejectValue("upfile", "error.not_image_file");
+            }
+        }
+
+        if (errors.hasErrors()) {
+            model.addAttribute("memberTypeList", memberService.getTypeList());
+            return "admins/club/save";
+        }
+
+        newsForm.setAuthor((String) session.getAttribute("loginId"));
+
+        newsService.addNews(newsForm);
+
+        ra.addFlashAttribute("statusMessage", "お知らせを追加しました。");
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/announcements";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteNews(
+            @PathVariable Integer id,
+            HttpSession session,
+            RedirectAttributes ra) {
+
+        if (session.getAttribute("loginId") == null) {
+            return "redirect:/admins/adminslogin";
+        }
+
+        newsService.deleteById(id);
+
+        ra.addFlashAttribute("statusMessage", "削除しました");
+
+        return "redirect:" + REACT_ADMIN_BASE_URL + "/announcements";
+    }
 }
- 
- @PostMapping("/delete/{id}")
- public String deleteNews(@PathVariable Integer id,
-                          RedirectAttributes ra) {
-
-     newsService.deleteById(id);  // ←あなたのService名に合わせる
-
-     ra.addFlashAttribute("statusMessage", "削除しました");
-
-     return "redirect:/admins/club/announcements"; // 一覧に戻す
- }
-
-
-
-}
-
