@@ -75,11 +75,17 @@ function AdminMemberCreatePage() {
       await client.post("/admin/members", {
         name,
         email,
-        memberTypeId: Number(memberTypeId),
+        type: {
+          id: Number(memberTypeId),
+        },
       });
 
       navigate("/admin/members");
     } catch (error) {
+      console.error("会員追加エラー:", error);
+      console.error("status:", error.response?.status);
+      console.error("data:", error.response?.data);
+
       if (error.response?.status === 401) {
         navigate("/admins/adminslogin");
         return;
@@ -116,19 +122,19 @@ function AdminMemberCreatePage() {
         </div>
 
         {errorMessage && (
-          <div className="admin-member-form-alert">
-            {errorMessage}
-          </div>
+          <div className="admin-member-form-alert">{errorMessage}</div>
         )}
 
         <form className="admin-member-form" onSubmit={handleSubmit}>
           <div className="admin-member-form-field">
             <label htmlFor="name">氏名</label>
+
             {fieldErrors.name && (
               <span className="admin-member-form-error">
                 {fieldErrors.name}
               </span>
             )}
+
             <input
               id="name"
               type="text"
@@ -140,11 +146,13 @@ function AdminMemberCreatePage() {
 
           <div className="admin-member-form-field">
             <label htmlFor="email">メールアドレス</label>
+
             {fieldErrors.email && (
               <span className="admin-member-form-error">
                 {fieldErrors.email}
               </span>
             )}
+
             <input
               id="email"
               type="email"
@@ -156,11 +164,13 @@ function AdminMemberCreatePage() {
 
           <div className="admin-member-form-field">
             <label htmlFor="memberTypeId">会員種別</label>
+
             {fieldErrors.memberTypeId && (
               <span className="admin-member-form-error">
                 {fieldErrors.memberTypeId}
               </span>
             )}
+
             <select
               id="memberTypeId"
               value={memberTypeId}

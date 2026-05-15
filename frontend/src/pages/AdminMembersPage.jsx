@@ -127,7 +127,7 @@ function AdminMembersPage() {
                 <tr key={member.id}>
                   <td>{member.id}</td>
                   <td>{member.name}</td>
-                  <td>{member.typeName}</td>
+                  <td>{member.type?.name}</td>
                   <td>{formatDate(member.created)}</td>
                   <td>
                     <div className="admin-row-actions">
